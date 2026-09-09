@@ -195,190 +195,192 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
         are not fetched automatically. Publishing requires your review and is
         limited to two original posts per UTC day.
       </p>
-      {rows.map((row) => {
-        const brief = JSON.parse(row.brief) as PublicBrief,
-          c = row.candidate
-            ? (JSON.parse(row.candidate) as PublicCandidate)
-            : null,
-          text = edits[row.id] ?? c?.text ?? '',
-          changed = c && text !== c.text;
-        return (
-          <article
-            key={row.id}
-            style={{
-              border: '1px solid #ded8e7',
-              borderRadius: 12,
-              padding: 20,
-              margin: '18px 0',
-            }}
-          >
-            <p style={{ fontSize: 14, color: '#665d75' }}>
-              {brief.kind} · {row.phase}
-            </p>
-            <h3 style={{ fontSize: 20 }}>{brief.topic}</h3>
-            {brief.source.url && (
-              <a
-                href={brief.source.url}
-                target="_blank"
-                rel="noreferrer"
-                style={{ color: '#784be8' }}
-              >
-                Read source
-              </a>
-            )}
-            {brief.source.text && (
-              <details style={{ margin: '16px 0' }}>
-                <summary>Source text · {brief.source.certainty}</summary>
-                <p style={{ whiteSpace: 'pre-wrap' }}>{brief.source.text}</p>
-              </details>
-            )}
-            {c && (
-              <>
-                <p>{c.why}</p>
-                {c.decision === 'draft' && (
-                  <>
-                    <label htmlFor={'draft-' + row.id}>Draft text</label>
-                    <textarea
-                      id={'draft-' + row.id}
-                      style={fieldStyle}
-                      rows={4}
-                      value={text}
-                      disabled={row.phase !== 'draft'}
-                      onChange={(e) => {
-                        setEdits({ ...edits, [row.id]: e.target.value });
-                        setReviewed({ ...reviewed, [row.id]: false });
+      {rows
+        .filter((row) => row.phase !== 'discarded')
+        .map((row) => {
+          const brief = JSON.parse(row.brief) as PublicBrief,
+            c = row.candidate
+              ? (JSON.parse(row.candidate) as PublicCandidate)
+              : null,
+            text = edits[row.id] ?? c?.text ?? '',
+            changed = c && text !== c.text;
+          return (
+            <article
+              key={row.id}
+              style={{
+                border: '1px solid #ded8e7',
+                borderRadius: 12,
+                padding: 20,
+                margin: '18px 0',
+              }}
+            >
+              <p style={{ fontSize: 14, color: '#665d75' }}>
+                {brief.kind} · {row.phase}
+              </p>
+              <h3 style={{ fontSize: 20 }}>{brief.topic}</h3>
+              {brief.source.url && (
+                <a
+                  href={brief.source.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: '#784be8' }}
+                >
+                  Read source
+                </a>
+              )}
+              {brief.source.text && (
+                <details style={{ margin: '16px 0' }}>
+                  <summary>Source text · {brief.source.certainty}</summary>
+                  <p style={{ whiteSpace: 'pre-wrap' }}>{brief.source.text}</p>
+                </details>
+              )}
+              {c && (
+                <>
+                  <p>{c.why}</p>
+                  {c.decision === 'draft' && (
+                    <>
+                      <label htmlFor={'draft-' + row.id}>Draft text</label>
+                      <textarea
+                        id={'draft-' + row.id}
+                        style={fieldStyle}
+                        rows={4}
+                        value={text}
+                        disabled={row.phase !== 'draft'}
+                        onChange={(e) => {
+                          setEdits({ ...edits, [row.id]: e.target.value });
+                          setReviewed({ ...reviewed, [row.id]: false });
+                        }}
+                      />
+                      <p>
+                        {postWeight(text)} / 280 · {c.stance}
+                      </p>
+                    </>
+                  )}
+                </>
+              )}
+              {row.phase === 'draft' && c?.decision === 'draft' && (
+                <>
+                  <button
+                    className="field-btn"
+                    disabled={disabled || !changed}
+                    onClick={() =>
+                      void perform({
+                        action: 'edit',
+                        id: row.id,
+                        revision: row.revision,
+                        text,
+                      })
+                    }
+                  >
+                    Save edits
+                  </button>
+                  {brief.kind === 'reply' ? (
+                    <a
+                      href={'https://x.com/i/status/' + brief.replyTo}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        display: 'inline-block',
+                        marginLeft: 16,
+                        color: '#784be8',
                       }}
-                    />
-                    <p>
-                      {postWeight(text)} / 280 · {c.stance}
-                    </p>
-                  </>
-                )}
-              </>
-            )}
-            {row.phase === 'draft' && c?.decision === 'draft' && (
-              <>
+                    >
+                      Open conversation
+                    </a>
+                  ) : (
+                    <>
+                      {brief.kind === 'event' &&
+                        brief.source.certainty !== 'confirmed' && (
+                          <p>
+                            Verify the facts and create a new brief before
+                            publishing this event.
+                          </p>
+                        )}
+                      <label style={{ display: 'block', margin: '16px 0' }}>
+                        <input
+                          type="checkbox"
+                          checked={!!reviewed[row.id]}
+                          onChange={(e) =>
+                            setReviewed({
+                              ...reviewed,
+                              [row.id]: e.target.checked,
+                            })
+                          }
+                        />{' '}
+                        I reviewed the facts and this exact text.
+                      </label>
+                      <button
+                        className="field-btn field-btn-primary"
+                        disabled={
+                          disabled ||
+                          !!changed ||
+                          !reviewed[row.id] ||
+                          postWeight(text) > 280 ||
+                          (brief.kind === 'event' &&
+                            brief.source.certainty !== 'confirmed')
+                        }
+                        onClick={() =>
+                          void perform({
+                            action: 'publish',
+                            id: row.id,
+                            revision: row.revision,
+                            text,
+                            reviewed: true,
+                          })
+                        }
+                      >
+                        Publish this post on X
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
+              {['queued', 'generating', 'draft', 'failed', 'skipped'].includes(
+                row.phase,
+              ) && (
                 <button
                   className="field-btn"
-                  disabled={disabled || !changed}
+                  disabled={disabled}
+                  style={{ margin: '16px 0' }}
                   onClick={() =>
                     void perform({
-                      action: 'edit',
+                      action: 'discard',
                       id: row.id,
                       revision: row.revision,
-                      text,
                     })
                   }
                 >
-                  Save edits
+                  Discard draft
                 </button>
-                {brief.kind === 'reply' ? (
-                  <a
-                    href={'https://x.com/i/status/' + brief.replyTo}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      display: 'inline-block',
-                      marginLeft: 16,
-                      color: '#784be8',
-                    }}
-                  >
-                    Open conversation
-                  </a>
-                ) : (
-                  <>
-                    {brief.kind === 'event' &&
-                      brief.source.certainty !== 'confirmed' && (
-                        <p>
-                          Verify the facts and create a new brief before
-                          publishing this event.
-                        </p>
-                      )}
-                    <label style={{ display: 'block', margin: '16px 0' }}>
-                      <input
-                        type="checkbox"
-                        checked={!!reviewed[row.id]}
-                        onChange={(e) =>
-                          setReviewed({
-                            ...reviewed,
-                            [row.id]: e.target.checked,
-                          })
-                        }
-                      />{' '}
-                      I reviewed the facts and this exact text.
-                    </label>
-                    <button
-                      className="field-btn field-btn-primary"
-                      disabled={
-                        disabled ||
-                        !!changed ||
-                        !reviewed[row.id] ||
-                        postWeight(text) > 280 ||
-                        (brief.kind === 'event' &&
-                          brief.source.certainty !== 'confirmed')
-                      }
-                      onClick={() =>
-                        void perform({
-                          action: 'publish',
-                          id: row.id,
-                          revision: row.revision,
-                          text,
-                          reviewed: true,
-                        })
-                      }
-                    >
-                      Publish this post on X
-                    </button>
-                  </>
-                )}
-              </>
-            )}
-            {['queued', 'generating', 'draft', 'failed', 'skipped'].includes(
-              row.phase,
-            ) && (
-              <button
-                className="field-btn"
-                disabled={disabled}
-                style={{ margin: '16px 0' }}
-                onClick={() =>
-                  void perform({
-                    action: 'discard',
-                    id: row.id,
-                    revision: row.revision,
-                  })
-                }
-              >
-                Discard draft
-              </button>
-            )}
-            {row.post_id && (
-              <a
-                href={'https://x.com/i/status/' + row.post_id}
-                target="_blank"
-                rel="noreferrer"
-                style={{ color: '#784be8' }}
-              >
-                View published post
-              </a>
-            )}
-            {(row.phase === 'uncertain' || row.phase === 'publishing') && (
-              <p>
-                Publication is not yet confirmed. Check X before any further
-                attempt; automatic retries are blocked.
-              </p>
-            )}
-            {row.phase === 'generating' && (
-              <p>
-                The local worker is preparing this draft. Refresh to check its
-                result.
-              </p>
-            )}
-            {row.phase === 'failed' && (
-              <p>The draft could not be completed. No post was sent.</p>
-            )}
-          </article>
-        );
-      })}
+              )}
+              {row.post_id && (
+                <a
+                  href={'https://x.com/i/status/' + row.post_id}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: '#784be8' }}
+                >
+                  View published post
+                </a>
+              )}
+              {(row.phase === 'uncertain' || row.phase === 'publishing') && (
+                <p>
+                  Publication is not yet confirmed. Check X before any further
+                  attempt; automatic retries are blocked.
+                </p>
+              )}
+              {row.phase === 'generating' && (
+                <p>
+                  The local worker is preparing this draft. Refresh to check its
+                  result.
+                </p>
+              )}
+              {row.phase === 'failed' && (
+                <p>The draft could not be completed. No post was sent.</p>
+              )}
+            </article>
+          );
+        })}
     </section>
   );
 }

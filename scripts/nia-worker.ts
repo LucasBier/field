@@ -5,6 +5,9 @@ import {
   publicCandidate,
   publicBrief,
   PUBLIC_CANDIDATE_SCHEMA,
+  PUBLIC_REVIEW_SCHEMA,
+  publicReviewMessages,
+  reviewedPublicCandidate,
 } from '../lib/nia-public';
 import type { NiaDraft } from '../db/nia-drafts';
 const watch = process.argv.includes('--watch');
@@ -101,10 +104,44 @@ do {
           !data.message?.content
         )
           throw new Error('Incomplete local response.');
-        const candidate = publicCandidate(
+        let candidate = publicCandidate(
           JSON.parse(data.message.content),
           brief,
         );
+        if (candidate.decision === 'draft') {
+          const checked = await fetch('http://127.0.0.1:11434/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: 'qwen3.5:9b',
+              messages: publicReviewMessages(brief, candidate),
+              format: PUBLIC_REVIEW_SCHEMA,
+              think: false,
+              stream: false,
+              options: { num_ctx: 8192, num_predict: 400, temperature: 0 },
+            }),
+            signal: AbortSignal.timeout(120000),
+          });
+          if (!checked.ok) throw new Error('Source review unavailable.');
+          const review = (await checked.json()) as {
+            done?: boolean;
+            done_reason?: string;
+            message?: { content?: string };
+          };
+          if (
+            !review.done ||
+            review.done_reason === 'length' ||
+            !review.message?.content
+          )
+            throw new Error('Incomplete source review.');
+          candidate = publicCandidate(
+            reviewedPublicCandidate(
+              candidate,
+              JSON.parse(review.message.content),
+            ),
+            brief,
+          );
+        }
         // Retain the result privately before saving, so a lost response never forces a duplicate model run.
         const path = process.env.FIELD_NIA_RECEIPTS;
         if (path) {

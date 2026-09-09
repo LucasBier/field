@@ -64,5 +64,7 @@ publication is paused by an uncertain result.
 
 The current limit is an operational default, not a purchase or investment budget.
 X charges API credits for publishing. Local generation does not use those credits.
-A successful draft is evidence that the model ran, not that its facts or judgment
-are correct. Character quality and editorial decisions still require review.
+The worker makes a separate source-review call after generation. A rejected
+review withholds the text; an incomplete review fails generation. This model check
+is an additional filter, not a factual guarantee. A successful draft is evidence
+that the model ran, not that its facts or judgment are correct. Character quality and editorial decisions still require review.
