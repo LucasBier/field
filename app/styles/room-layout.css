@@ -215,7 +215,7 @@
 @media (max-width: 900px) {
   .spatial-home {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 64px minmax(220px, 1fr) auto auto;
+    grid-template-rows: 64px minmax(min-content, 1fr) auto auto;
     overflow-y: auto;
   }
   .spatial-home .space-header {
@@ -335,7 +335,7 @@
 }
 @media (max-height: 650px) and (max-width: 900px) {
   .spatial-home {
-    grid-template-rows: 56px minmax(320px, 1fr) auto auto;
+    grid-template-rows: 56px minmax(min-content, 1fr) auto auto;
   }
 }
 
@@ -361,5 +361,11 @@
   }
   .spatial-home .space-sidebar .space-tool-dock {
     margin: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .spatial-home .scene-viewport {
+    min-height: 240px;
   }
 }
