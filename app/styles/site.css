@@ -365,7 +365,8 @@
   align-items: center;
   gap: 24px;
 }
-.field-site-nav > a:not(.field-wordmark) {
+.field-site-nav > a:not(.field-wordmark),
+.field-open-space-link {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -375,6 +376,28 @@
 }
 .field-site-nav > a:last-child {
   justify-self: end;
+}
+.field-site-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 12px;
+}
+.field-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.field-social-link:hover {
+  background: rgb(255 255 255 / 12%);
+}
+.field-open-space-link {
+  min-height: 40px;
+  white-space: nowrap;
 }
 .field-wordmark {
   display: block;
@@ -610,7 +633,8 @@
     min-height: 116px;
     padding: 28px 5%;
   }
-  .field-site-nav > a:not(.field-wordmark) {
+  .field-site-nav > a:not(.field-wordmark),
+  .field-open-space-link {
     font-size: 14px;
   }
   .field-entry {
@@ -630,8 +654,8 @@
 }
 @media (max-width: 650px) {
   .field-site-nav {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 22px 16px;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 22px 8px;
     min-height: 0;
   }
   .field-site-nav .field-wordmark {
@@ -639,10 +663,18 @@
     grid-row: 1;
     width: 192px;
   }
-  .field-site-nav > a:not(.field-wordmark) {
+  .field-site-nav > a:not(.field-wordmark),
+  .field-site-nav-actions {
     grid-row: 2;
   }
-  .field-site-nav > a:not(.field-wordmark) {
+  .field-site-nav-actions {
+    gap: 6px;
+  }
+  .field-social-link {
+    width: 32px;
+  }
+  .field-site-nav > a:not(.field-wordmark),
+  .field-open-space-link {
     font-family: var(--font-geist-sans), sans-serif;
     font-size: 14px;
     text-transform: none;

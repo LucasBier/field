@@ -19,7 +19,7 @@ Read [Nia’s character, visual and voice specification](docs/nia.md). Her ident
 Node.js 22.13 or newer is required.
 
 ```sh
-git clone https://github.com/LucasBier/field.git
+git clone https://github.com/OurFieldLabs/field.git
 cd field
 npm ci
 npm run db:setup
