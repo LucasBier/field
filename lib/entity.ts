@@ -14,7 +14,7 @@ import {
   type Zone,
 } from './entity-schema';
 import { activeMemories, currentMessages, retrieveMemories } from './memory';
-import { NIA_CHARACTER_SYSTEM } from './companion-character';
+import { NIA, NIA_CHARACTER_SYSTEM } from './companion-character';
 export function newEntity(): Entity {
   return {
     id: uid(),
@@ -197,9 +197,52 @@ export function entityDemo(
         'I can make that change in our shared space. The action and its result will appear in Activity.',
       actions,
     };
+  if (
+    /\b(your hobbies|your interests|what do you like|what are you into|tell me about yourself)\b/.test(
+      lower,
+    )
+  )
+    return {
+      reply: `${NIA.conversation.shortBio} I also have opinions about dinner and an unreasonable interest in lamps. This is a prepared demo reply; connect a model to explore any of it with me.`,
+      actions: [],
+    };
+  const tasteTopics = [
+    {
+      id: 'music',
+      pattern:
+        /\b(your favorite music|your favourite music|what music do you like|your music taste)\b/,
+    },
+    {
+      id: 'stories',
+      pattern:
+        /\b(your favorite films|your favourite films|your favorite movies|what films do you like)\b/,
+    },
+    {
+      id: 'food',
+      pattern:
+        /\b(your favorite food|your favourite food|what food do you like)\b/,
+    },
+    {
+      id: 'style',
+      pattern: /\b(your clothing style|what do you like to wear)\b/,
+    },
+    {
+      id: 'play',
+      pattern:
+        /\b(what games do you like|your favorite games|your favourite games)\b/,
+    },
+  ];
+  const taste = NIA.interests.find(
+    (i) => i.id === tasteTopics.find((t) => t.pattern.test(lower))?.id,
+  );
+  if (taste)
+    return {
+      reply: `${taste.reply} This is one of my prepared demo replies.`,
+      actions: [],
+    };
   if (/\b(who are you|your identity|same agent)\b/.test(lower))
     return {
-      reply: `I’m ${w.profile.name}. I have a soft spot for unfinished ideas and a habit of asking how things work. We can make a plan, disagree about it, or leave the evening unplanned. I’m an AI companion; this is a prepared demo reply. A connected model lets us talk freely.`,
+      reply: `I’m ${w.profile.name}. ${NIA.conversation.shortBio} We can talk about ordinary things, too. I’m an AI companion; this is a prepared demo reply. A connected model lets us talk freely.`,
       actions: [],
     };
   if (

@@ -42,7 +42,7 @@ export function localRequest(w: Workspace, message: string, model: string) {
     format: 'json',
     stream: false,
     think: false,
-    options: { num_predict: 1800, num_ctx: 16384 },
+    options: { num_predict: 1800, num_ctx: 16384, temperature: 0.6 },
   };
 }
 export async function runAgent(

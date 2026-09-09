@@ -47,3 +47,22 @@ export const xConnections = sqliteTable('x_connections', {
   leaseUntil: integer('lease_until').notNull().default(0),
   updatedAt: integer('updated_at').notNull(),
 });
+
+export const niaDrafts = sqliteTable(
+  'nia_drafts',
+  {
+    id: text('id').primaryKey(),
+    brief: text('brief').notNull(),
+    candidate: text('candidate'),
+    phase: text('phase').notNull(),
+    revision: integer('revision').notNull(),
+    fingerprint: text('fingerprint'),
+    postId: text('post_id'),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at').notNull(),
+  },
+  (t) => [
+    index('idx_nia_drafts_created').on(t.createdAt),
+    index('idx_nia_drafts_phase').on(t.phase),
+  ],
+);

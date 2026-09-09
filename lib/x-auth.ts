@@ -203,6 +203,24 @@ export class XClient {
   refresh(token: string) {
     return this.tokens({ grant_type: 'refresh_token', refresh_token: token });
   }
+  async post(token: string, text: string) {
+    const r = await this.transport('https://api.x.com/2/tweets', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+      redirect: 'error',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!r.ok) throw new XError('x_publication_unconfirmed', 502);
+    const v = (await r.json()) as { data?: { id?: string } };
+    if (!v.data?.id || !/^\d{1,25}$/.test(v.data.id))
+      throw new XError('x_publication_unconfirmed', 502);
+    return v.data.id;
+  }
   async me(token: string) {
     let r: Response;
     try {

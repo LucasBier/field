@@ -26,3 +26,6 @@ FIELD_X_OWNER_KEY=""
 FIELD_X_ENCRYPTION_KEY=""
 FIELD_X_USER_ID=""
 FIELD_X_ORIGIN=""
+
+# Separate worker credential: draft generation only, no publication permission.
+FIELD_NIA_WORKER_KEY=""

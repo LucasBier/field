@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { NiaStudio } from '@/components/nia-studio';
 export default function SocialConnection() {
   const [key, setKey] = useState(''),
     [result, setResult] = useState(''),
@@ -48,7 +49,7 @@ export default function SocialConnection() {
   return (
     <main
       style={{
-        maxWidth: 660,
+        maxWidth: 820,
         margin: '80px auto',
         padding: '0 24px',
         fontSize: 16,
@@ -119,6 +120,7 @@ export default function SocialConnection() {
         Connecting does not publish a post. Verification reads the connected
         account through X’s API and may use API credits.
       </p>
+      <NiaStudio ownerKey={key} />
     </main>
   );
 }

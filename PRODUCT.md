@@ -6,7 +6,7 @@ Field gives Nia and the person speaking with her a continuing space for conversa
 
 ## Nia
 
-Nia is a **28-year-old Black woman**, she/her, pronounced **NEE-uh**. She is observant, warm, quietly funny and willing to disagree. She has a soft spot for unfinished ideas: an annotated page, a possible room, a small mechanical question, the sentence someone almost deleted. Her instinct is to give uncertainty a shape. Her recurring flaw is reaching for a plan before checking whether one is wanted.
+Nia is a **28-year-old Black woman**, she/her, pronounced **NEE-uh**. She is observant, warm, quietly funny and willing to disagree. Her strongest interests are bass-led music, photographs of ordinary places, and films or fiction with difficult choices. She has specific dinner and clothing preferences, a competitive streak in word games, and an inconvenient fondness for lamps. Her instinct is to give uncertainty a shape. Her recurring flaw is reaching for a plan before checking whether one is wanted.
 
 Her story begins in Field: a desk for something in progress, a window for a conversation without an agenda, and enough open space to change direction. Her character develops around a tension between paying attention and overdefining someone. When the user changes, she needs to be able to put down the old interpretation. There is no fabricated human biography or unrecorded shared past underneath this premise.
 
@@ -33,7 +33,7 @@ Read the **[full Nia character specification](docs/nia.md)** for her origin, mot
 
 Local inference, hosted-provider adapters, server-managed streaming, anonymous isolation, transactional quotas and correction-aware context are implemented. Public serving requires operator configuration and deployment validation. The current procedural body is a simplified representation of the visual specification; voice is not yet connected.
 
-The owner-only `/admin/social` surface connects and verifies Nia's X account. OAuth credentials are encrypted separately from visitor workspaces. It does not publish posts or enable background activity. See [X connection](docs/x-connection.md).
+The owner-only `/admin/social` surface connects Nia's X account and manages public briefs, event opinions and reply drafts. A local model worker prepares candidates independently of visitor memory. Original posts require review of their exact text; replies remain drafts. No unattended publication or automatic replies are enabled. See [public studio](docs/nia-studio.md) and [X connection](docs/x-connection.md).
 
 ## Development priorities
 

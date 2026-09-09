@@ -204,7 +204,7 @@ export default function Docs() {
               }
             />
             <p>
-              Nia’s identity, temperament, portrait reference and palette live
+              Nia’s identity, interests, small contradictions, voice, portrait reference and palette live
               in <code>lib/companion-character.ts</code>. Her complete
               character, visual and voice specification is in{' '}
               <code>docs/nia.md</code>. The runtime combines that definition

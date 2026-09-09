@@ -22,7 +22,8 @@
     "test:unit": "node scripts/verify.mjs unit",
     "test:integration": "node scripts/verify.mjs integration",
     "check": "node scripts/verify.mjs all",
-    "build:vercel": "node scripts/package-source.mjs && vite build --config vite.vercel.config.ts"
+    "build:vercel": "node scripts/package-source.mjs && vite build --config vite.vercel.config.ts",
+    "nia:drafts": "tsx scripts/nia-worker.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

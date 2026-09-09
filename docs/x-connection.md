@@ -2,7 +2,7 @@
 
 Field connects one operator-owned X account using OAuth 2.0 Authorization Code with
 PKCE (S256). Website visitors cannot connect or replace Nia's account. This module
-connects and verifies the account; it does not publish posts or run a scheduler.
+connects and verifies the account; publication is handled separately by the reviewed public studio, not by account connection.
 
 ## Configuration
 
@@ -48,7 +48,7 @@ only accepts an authorization initiated by the owner in the same browser.
 ## Boundaries
 
 Requested scopes are `tweet.read users.read tweet.write media.write offline.access`.
-Having write permission does not enable autonomous publication. A future publishing
-worker must add its own reviewed outbox, idempotency/reconciliation, limits and
-explicit publishing controls. Private visitor conversations must never become
+Having write permission does not enable autonomous publication. The public studio
+uses a reviewed outbox, atomic publication claims, exact duplicate protection and
+a two-post daily limit. Its local worker can draft but cannot authorize publication. Private visitor conversations must never become
 material for Nia's public account. X API credits do not pay for model inference.
