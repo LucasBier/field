@@ -156,7 +156,7 @@ Violet belongs primarily to Field's environment. It can appear as restrained ref
 
 ### Framing, light and motion
 
-Portraits use a close conversational distance, soft neutral light and a quiet background. Both eyes and the jawline should remain readable. Frame without cropping the chin or hair fastening. The camera is a conversational viewpoint, not a surveillance view or an objectifying body scan.
+Lifestyle photographs favor natural full-length views, with the top of her hair, both shoes and a little ground visible. Use relaxed standing or ordinary walking with believable weight, loose shoulders and small spontaneous expressions. Her face usually turns toward the viewer; avoid forcing perfectly square shoulders, a rigid head or a symmetrical pose. Use soft daylight, natural body proportions and a readable everyday setting. Do not keep repeating side views, over-the-shoulder poses or cropped headshots. The camera is a conversational viewpoint, not a surveillance view or an objectifying body scan.
 
 At rest, her weight is balanced and hands are relaxed. Listening can include one small head movement; thinking can briefly bring a hand near the chin. A greeting uses a short open-palm wave. Walking uses restrained arm swing and ordinary steps. Do not loop flirtatious gestures, repeated nodding or constant fidgeting.
 

@@ -74,8 +74,8 @@ that the model ran, not that its facts or judgment are correct. Character qualit
 
 ## Portraits and continuity
 
-The portrait catalog in `lib/nia-media.ts` contains three authored scenes: a cafe
-window, a bookshop and an evening street. Each entry pins the image bytes with a
+The portrait catalog in `lib/nia-media.ts` contains authored scenes in everyday
+settings, including full-length standing and walking photographs. Each entry pins the image bytes with a
 SHA-256 digest. Briefs select an immutable catalog ID; arbitrary image URLs are
 rejected. The server loads the image only from the configured site origin,
 verifies its type, size and digest, uploads it through X API v2 and attaches the
@@ -87,6 +87,14 @@ expressions. They do not establish that Nia visited a cafe, bought a book or had
 photographer. Captions may discuss styling, composition and mood; they must not
 invent a completed real-world activity. The existing avatar and spatial model
 remain separate assets. Generation provenance is retained in the image files.
+
+Favor natural full-body photographs with her hair and both shoes fully in frame,
+including relaxed standing and walking toward the camera. Let her shoulders,
+hands and expression remain loose; a rigidly symmetrical front view also feels
+posed. The catalog records view and framing so the editor can compare the previous
+image before choosing. Prefer the full-length walking or standing assets for the
+next portrait. Do not use consecutive side views or keep reverting to cropped
+headshots. Keep the existing interval and spacing between image posts.
 
 ## Public discovery and editorial scheduling
 
