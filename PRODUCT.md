@@ -48,3 +48,5 @@ Physical-room perception, autonomous background behavior and external task execu
 ## Evaluation
 
 Measure continuity after a model change, stale-memory recurrence after correction, rejected-action side effects, duplicate execution, interrupted-request recovery, time to resume a plan, voluntary return visits and total operating cost per returning workspace. Review whether Nia can disagree, accept a correction and offer company without forcing a task. Product claims should follow these measurements.
+
+Nia’s room supports sofa reading, desk activity, resting, looking out at the city and stretching. A local activity controller manages walking, sitting, rising and user interruption. These embodied activities are presentation behavior, not claims of external work or model training. Mobile controls occupy separate space from the character.

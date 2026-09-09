@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
+import { FieldMark } from '@/components/field-brand';
 import { useRef, useState } from 'react';
 import {
-  CircleDot,
   Brain,
   Settings2,
   ListTodo,
@@ -132,7 +132,7 @@ export default function Space() {
       />
       <header className="space-header">
         <Link href="/" className="home-brand">
-          <CircleDot size={27} />
+          <FieldMark />
           field<span>/ space</span>
         </Link>
         <div className="space-agent-title">
@@ -178,7 +178,7 @@ export default function Space() {
             {localConnection ? <Cpu size={15} /> : <Cloud size={15} />}
             <span>
               {connection.provider === 'demo'
-                ? 'Connect model'
+                ? 'Connect Nia'
                 : localConnection
                   ? 'Local model'
                   : 'Hosted model'}
@@ -186,75 +186,99 @@ export default function Space() {
           </Button>
         </nav>
       </header>
-      <div className="space-introduction">
-        <p>YOUR COMPANION · YOUR SHARED SPACE</p>
-        <h1>{workspace.profile.name} is here.</h1>
-        <p>
-          {workspace.entity
-            ? `${activeMemories(workspace.memories).length} current memories. ${workspace.entity.tasks.filter((t) => t.state === 'open').length} little plans.`
-            : 'Finding where we left off…'}
-        </p>
-        <div className="location-buttons">
-          {(['center', 'desk', 'window'] as Zone[]).map((z) => (
-            <button
-              key={z}
-              disabled={disabled}
-              aria-pressed={workspace.entity?.zone === z}
-              onClick={() => move(z)}
-            >
-              <Move size={13} />
-              {z}
-            </button>
-          ))}
+      <aside className="space-sidebar">
+        <div className="space-introduction">
+          <p>YOUR COMPANION · YOUR SHARED SPACE</p>
+          <h1>{workspace.profile.name} is here.</h1>
+          <p>
+            {workspace.entity
+              ? `${activeMemories(workspace.memories).length} current memories. ${workspace.entity.tasks.filter((t) => t.state === 'open').length} little plans.`
+              : 'Finding where we left off…'}
+          </p>
+          <div className="location-buttons">
+            {(['center', 'desk', 'window'] as Zone[]).map((z) => (
+              <button
+                key={z}
+                disabled={disabled}
+                aria-pressed={workspace.entity?.zone === z}
+                onClick={() => move(z)}
+              >
+                <Move size={13} />
+                {z}
+              </button>
+            ))}
+          </div>
+          <button
+            className="companion-greeting"
+            disabled={disabled}
+            onClick={() => setGreeting((n) => n + 1)}
+          >
+            <Hand size={15} /> Wave hello
+          </button>
+          <button
+            className="identity-hint"
+            disabled={disabled}
+            onClick={() => setPanel('identity')}
+          >
+            She / her · AI companion · Make her your own
+            <ArrowUpRight size={12} />
+          </button>
         </div>
-        <button
-          className="companion-greeting"
-          disabled={disabled}
-          onClick={() => setGreeting((n) => n + 1)}
-        >
-          <Hand size={15} /> Wave hello
-        </button>
-        <button
-          className="identity-hint"
-          disabled={disabled}
-          onClick={() => setPanel('identity')}
-        >
-          She / her · AI companion · Make her your own
-          <ArrowUpRight size={12} />
-        </button>
-      </div>
-      <div className="space-tool-dock">
-        <button disabled={disabled} onClick={() => setPanel('tasks')}>
-          <ListTodo size={19} />
-          <span>Tasks</span>
-          {!!workspace.entity?.tasks.filter((t) => t.state === 'open')
-            .length && (
-            <b>
-              {workspace.entity.tasks.filter((t) => t.state === 'open').length}
-            </b>
-          )}
-        </button>
-        <button disabled={disabled} onClick={() => setPanel('notes')}>
-          <StickyNote size={19} />
-          <span>Notes</span>
-        </button>
-        <button disabled={disabled} onClick={() => setPanel('activity')}>
-          <History size={19} />
-          <span>Activity</span>
-        </button>
-        <button disabled={!ready} onClick={() => setRuntimeOpen(true)}>
-          <Activity size={19} />
-          <span>Runtime</span>
-        </button>
-        <button onClick={() => setPanel('conversation')}>
-          <MessageCircle size={19} />
-          <span>Conversation</span>
-        </button>
-        <Link href="/lab">
-          <Boxes size={19} />
-          <span>Experiments</span>
-        </Link>
-      </div>
+        <div className="space-tool-dock">
+          <button
+            aria-label="Open tasks"
+            disabled={disabled}
+            onClick={() => setPanel('tasks')}
+          >
+            <ListTodo size={19} />
+            <span>Tasks</span>
+            {!!workspace.entity?.tasks.filter((t) => t.state === 'open')
+              .length && (
+              <b>
+                {
+                  workspace.entity.tasks.filter((t) => t.state === 'open')
+                    .length
+                }
+              </b>
+            )}
+          </button>
+          <button
+            aria-label="Open notes"
+            disabled={disabled}
+            onClick={() => setPanel('notes')}
+          >
+            <StickyNote size={19} />
+            <span>Notes</span>
+          </button>
+          <button
+            aria-label="Open activity"
+            disabled={disabled}
+            onClick={() => setPanel('activity')}
+          >
+            <History size={19} />
+            <span>Activity</span>
+          </button>
+          <button
+            aria-label="Open runtime"
+            disabled={!ready}
+            onClick={() => setRuntimeOpen(true)}
+          >
+            <Activity size={19} />
+            <span>Runtime</span>
+          </button>
+          <button
+            aria-label="Open conversation"
+            onClick={() => setPanel('conversation')}
+          >
+            <MessageCircle size={19} />
+            <span>Conversation</span>
+          </button>
+          <Link href="/lab" aria-label="Open experiments">
+            <Boxes size={19} />
+            <span>Experiments</span>
+          </Link>
+        </div>
+      </aside>
       {recentNote && (
         <button className="world-note-peek" onClick={() => setPanel('notes')}>
           <span>
@@ -283,7 +307,7 @@ export default function Space() {
             <div>
               <span>
                 {workspace.profile.name} ·{' '}
-                {last.mode === 'demo' ? 'Demo reply' : 'Model reply'}
+                {last.mode === 'demo' ? 'Room action' : 'Reply'}
               </span>
               <button
                 aria-label="Dismiss reply"
@@ -293,7 +317,10 @@ export default function Space() {
               </button>
             </div>
             <p>{last.text}</p>
-            <button onClick={() => setPanel('conversation')}>
+            <button
+              aria-label="Open conversation"
+              onClick={() => setPanel('conversation')}
+            >
               Open conversation
               <ArrowUpRight size={12} />
             </button>
@@ -302,7 +329,9 @@ export default function Space() {
           <p className="space-welcome">
             {busy
               ? 'Thinking about what you said…'
-              : 'Hi, you. Tell me about your day.'}
+              : connection.provider === 'demo'
+                ? 'Your space is ready. Connect Nia to start talking.'
+                : 'Hi, you. Tell me about your day.'}
           </p>
         )}
         {!last && !busy && (
@@ -345,7 +374,7 @@ export default function Space() {
             maxLength={3000}
             placeholder={
               connection.provider === 'demo'
-                ? 'Say “I’m home” or “Remember: …”'
+                ? 'Connect Nia to start talking…'
                 : `Talk to ${workspace.profile.name}…`
             }
             value={message}

@@ -14,7 +14,7 @@ The in-app guide at `/docs` covers connections, customization, data portability,
 
 ## Local conversations without a key
 
-Install [Ollama](https://ollama.com/download). On macOS, `brew install ollama` is also supported. The tested starting model is [Qwen3.5 9B](https://ollama.com/library/qwen3.5:9b), approximately 6.6 GB at Q4_K_M quantization. On this M4 / 24 GB machine it runs through Metal. Do not start a second Ollama service if one is already listening on port 11434.
+Install [Ollama](https://ollama.com/download), then choose an installed model identifier or import your trained weights. Set that identifier explicitly in the private configuration below. Do not start a second service if one is already listening on port 11434.
 
 In one terminal, run `npm run model:serve` and keep it running. In a second terminal, run `npm run model:pull` once. The helper binds only loopback, disables Ollama cloud features, allows the local Field origin, and limits inference to one request and one loaded model.
 
@@ -23,20 +23,20 @@ Merge these settings into `.dev.vars`, preserving any existing local workspace s
 ```dotenv
 FIELD_AI_ENABLED="true"
 FIELD_AI_PROVIDER="ollama"
-FIELD_AI_MODEL="qwen3.5:9b"
+FIELD_AI_MODEL="your-model"
 FIELD_AI_CONCURRENCY="1"
 FIELD_AI_VISITOR_TURNS="100"
 ```
 
-Restart Field with `npm run dev -- --port 3001`. Opening `/space` automatically chooses **Local · qwen3.5:9b** when the installed model is reachable. The browser calls Field's backend; only the backend calls local Ollama. Visitors do not need to enter a key or grant browser access to the model port. Keep both the Field and Ollama processes running. First use can be slower while model weights load; unused weights are released after ten minutes.
+Restart Field with `npm run dev -- --port 3001`. Opening `/space` automatically chooses **Nia · Local connection** when the installed model is reachable. The browser calls Field's backend; only the backend calls local Ollama. Visitors do not need to enter a key or grant browser access to the model port. Keep both the Field and Ollama processes running. First use can be slower while model weights load; unused weights are released after ten minutes.
 
 There are no provider API charges for local inference. The computer supplies memory, power and compute. Local attempts still count toward visitor/global turn limits and concurrency limits, with exactly zero recorded API cost. Requests have a 120-second timeout and a 180-second recovery lease. The 16K model context reserves room for output and rejects oversized inputs instead of silently dropping earlier context. Only the final schema-validated response can save actions. Local inference is intentionally disabled in production builds: a cloud-hosted Field instance cannot use localhost to reach this computer.
 
-If the connection is offline, start Ollama and refresh the space. To unload weights while leaving Ollama running, use `ollama stop qwen3.5:9b`. Stopping Ollama does not delete the downloaded model or saved companion data.
+If the connection is offline, start Ollama and refresh the space. To unload weights while leaving Ollama running, use `ollama stop your-model`. Stopping Ollama does not delete the downloaded model or saved companion data.
 
 ## Other model connections
 
-When Field’s shared connection is enabled by the site owner, `/space` selects it automatically and visitors need no key. Otherwise demo mode needs no key, and the model button offers personal connections for open-ended conversation.
+When Field’s shared connection is enabled by the site owner, `/space` selects it automatically and visitors need no key. Otherwise the room remains usable and conversation is explicitly disconnected. The connection button offers personal inference services.
 
 For local inference, install Ollama and a chat model that supports JSON output. Use `ollama list` to inspect installed models. Quit any running Ollama desktop process before starting another server from your terminal.
 

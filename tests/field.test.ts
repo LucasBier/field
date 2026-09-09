@@ -108,9 +108,9 @@ await test('remember commands preserve user provenance; canonical storage exclud
   assert.ok(!data.includes('should-never-save'));
   assert.ok(!data.includes('apiKey'));
 });
-await test('demo is honest about unsupported input and inactive spring gravity', () => {
+await test('offline experiment commands reject unsupported input and explain inactive spring gravity', () => {
   const w = initialWorkspace();
-  assert.match(demoReply('Tell me the weather', w).reply, /Demo mode/);
+  assert.match(demoReply('Tell me the weather', w).reply, /Connect a model/);
   const spring = createExperiment('spring');
   w.experiments.push(spring);
   w.selectedId = spring.id;

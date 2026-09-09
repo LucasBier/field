@@ -5,7 +5,7 @@ FIELD_LOCAL_WORKSPACE="false"
 
 # Shared conversations: choose deepseek or ollama.
 # Ollama is local-development only. It requires no key, dollar budget or rates.
-# For local use: provider=ollama, model=qwen3.5:9b, concurrency=1.
+# For local use: provider=ollama, model=your-model, concurrency=1.
 # Start Ollama and pull the model before setting enabled=true.
 FIELD_AI_ENABLED="false"
 FIELD_AI_PROVIDER="deepseek"

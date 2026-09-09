@@ -12,7 +12,7 @@ export function beginTurn(
     id: uid(),
     requestId: uid(),
     provider: connection.provider,
-    model: connection.provider === 'demo' ? 'Demo' : connection.model!,
+    model: connection.provider === 'demo' ? 'Room controls' : connection.model!,
     status: 'running',
     startedAt: stamp(),
     receiptIds: [],
@@ -104,7 +104,7 @@ export function completeTurn(
       'memory_saved',
       'Saved a statement provided by you.',
       'you',
-      'Demo',
+      'Room controls',
     );
   }
   const previousReceipts = new Set(w.entity?.receipts.map((r) => r.id));

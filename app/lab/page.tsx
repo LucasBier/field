@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { FieldMark } from '@/components/field-brand';
 import {
   CircleDot,
   Cpu,
@@ -359,7 +360,7 @@ export default function Home() {
     >
       <header className="topbar">
         <div className="brand">
-          <CircleDot size={30} />
+          <FieldMark />
           <strong>
             field<span>.</span>
           </strong>
@@ -400,7 +401,7 @@ export default function Home() {
             <h2>{workspace.profile.name}</h2>
             <p>Your persistent collaborator</p>
             <span className="mode-tag">
-              {connection ? 'Model mode' : 'Demo mode'}
+              {connection ? 'Model mode' : 'Room controls'}
             </span>
           </div>
         </SidebarHeader>
@@ -795,7 +796,7 @@ export default function Home() {
               <p>
                 {connection
                   ? 'Model responses · Check the evidence'
-                  : 'Demo mode · Guided exploration'}
+                  : 'Experiment controls · No conversation connection'}
               </p>
             </div>
             <span className="online-dot" />
@@ -812,7 +813,7 @@ export default function Home() {
                 <span className="message-name">
                   {m.role === 'assistant' ? workspace.profile.name : 'You'}
                   {m.role === 'assistant' && (
-                    <span>{m.mode === 'demo' ? 'DEMO' : 'MODEL'}</span>
+                    <span>{m.mode === 'demo' ? 'ACTION' : 'REPLY'}</span>
                   )}
                 </span>
                 <p>{m.text}</p>
@@ -906,7 +907,7 @@ export default function Home() {
                 <span>
                   {connection
                     ? 'DeepSeek · Uses your API key'
-                    : 'Demo · No model connected'}
+                    : 'Connect a model to talk'}
                 </span>
                 <Button
                   type="submit"

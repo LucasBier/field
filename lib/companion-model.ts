@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import type { CompanionPose } from './companion-avatar';
 import { NIA } from './companion-character';
+import {
+  createCompanionInteraction,
+  type CompanionInteraction,
+} from './companion-interaction';
 
 export type CompanionModelSpec = {
   src: `/characters/${string}.glb`;
@@ -13,7 +17,13 @@ export const NIA_MODEL: CompanionModelSpec = {
   src: '/characters/nia-v2.glb',
   height: 1.68,
   facing: 0,
-  clips: { idle: 'Idle', walk: 'Walk', wave: 'Wave' },
+  clips: {
+    idle: 'Idle',
+    walk: 'Walk',
+    wave: 'Wave',
+    sit: 'Sit',
+    stand: 'Stand',
+  },
 };
 
 export function disposeModel(root: THREE.Object3D) {
@@ -94,17 +104,19 @@ export function createModelCompanion(
       if (object instanceof THREE.SkinnedMesh) object.frustumCulled = false;
     }
   });
+  const interactionRig = createCompanionInteraction(body, root, orientation);
   const mixer = new THREE.AnimationMixer(root);
   const actions = new Map<CompanionPose, THREE.AnimationAction>();
   for (const [pose, name] of Object.entries(spec.clips)) {
     const clip = THREE.AnimationClip.findByName(clips, name);
     if (!clip) {
       mixer.uncacheRoot(root);
+      interactionRig.dispose();
       disposeModel(body);
       throw new Error(`Character animation is missing: ${name}`);
     }
     const action = mixer.clipAction(clip);
-    if (pose === 'wave') {
+    if (pose === 'wave' || pose === 'stand') {
       action.setLoop(THREE.LoopOnce, 1);
       action.clampWhenFinished = true;
     }
@@ -126,25 +138,54 @@ export function createModelCompanion(
   mixer.update(0);
   return {
     body,
-    update(dt: number, pose: CompanionPose, reduced: boolean) {
+    update(
+      dt: number,
+      pose: CompanionPose,
+      reduced: boolean,
+      interaction?: CompanionInteraction,
+    ) {
       if (disposed) return;
+      interactionRig.reset();
+      if (interaction?.seatHeight !== undefined && actions.has('sit')) {
+        mixer.stopAllAction();
+        current = undefined;
+        const seated = actions.get('sit')!;
+        const stand = actions.get('stand');
+        const transition = interaction.transitioning && stand;
+        const action = transition ? stand : seated;
+        action.enabled = true;
+        action.paused = true;
+        action.setEffectiveWeight(1).play();
+        action.time = transition
+          ? action.getClip().duration * (1 - interaction.blend)
+          : reduced
+            ? 0
+            : interaction.time % action.getClip().duration;
+        mixer.update(0);
+        interactionRig.apply(interaction, reduced);
+        return;
+      }
       if (reduced) {
         mixer.stopAllAction();
         current = undefined;
         select('idle', true);
         mixer.update(0);
+        interactionRig.apply(interaction, true);
         return;
       }
       select(pose, false);
+      if (current) current.paused = false;
       mixer.update(
         Number.isFinite(dt) ? THREE.MathUtils.clamp(dt, 0, 0.05) : 0,
       );
+      interactionRig.apply(interaction, reduced);
     },
     dispose() {
       if (disposed) return;
       disposed = true;
       mixer.stopAllAction();
       mixer.uncacheRoot(root);
+      interactionRig.dispose();
       disposeModel(body);
     },
   };

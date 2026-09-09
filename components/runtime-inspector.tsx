@@ -75,8 +75,10 @@ export function RuntimeInspector({
                   </span>
                   <span>
                     {run.provider === 'demo'
-                      ? 'Demo · no inference'
-                      : `${run.provider} / ${run.model}`}
+                      ? 'Room controls · no inference'
+                      : run.provider === 'ollama'
+                        ? 'Nia · Local connection'
+                        : 'Nia · Connected'}
                   </span>
                   <ArrowDown size={14} />
                 </summary>
@@ -149,7 +151,7 @@ export function RuntimeInspector({
                           </small>
                         </>
                       ) : (
-                        <p>Prepared demo logic. No model context was sent.</p>
+                        <p>Direct room command. No model context was sent.</p>
                       )}
                     </div>
                   </li>

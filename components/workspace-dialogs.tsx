@@ -472,7 +472,7 @@ export function SettingsDialog({
         <div className="model-settings">
           <h3>Bring your model</h3>
           <p>
-            Demo mode works without a key. Add DeepSeek for open-ended
+            Experiment controls work without a key. Add DeepSeek for open-ended
             conversation and natural-language experiment changes.
           </p>
           <label htmlFor="model-select">Model</label>
@@ -532,7 +532,7 @@ export function SettingsDialog({
                 onClick={() => {
                   setConnection(null);
                   setKey('');
-                  setNotice('Back in demo mode.');
+                  setNotice('Conversation disconnected.');
                 }}
               >
                 Disconnect
@@ -552,7 +552,7 @@ export function SettingsDialog({
           {notice ||
             (connection
               ? 'Model mode selected · Key is not stored'
-              : 'Currently in demo mode')}
+              : 'No conversation service connected')}
         </output>
       </DialogContent>
     </Dialog>

@@ -115,7 +115,7 @@ export default function Home() {
               experience becomes part of a continuing relationship.
             </p>
             <Link href="/space" className="field-text-link">
-              Explore the current demo <ArrowUpRight size={17} />
+              Enter Nia’s space <ArrowUpRight size={17} />
             </Link>
           </Reveal>
           <SpatialPreview />

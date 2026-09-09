@@ -14,11 +14,14 @@ import { createRoomAudio } from '@/lib/room-audio';
 import {
   ROOM_LOCATIONS,
   ROOM_BOUNDS,
-  canStand,
-  findRoomPath,
   nearestZone,
   type RoomPoint,
 } from '@/lib/room-navigation';
+import {
+  RoomActivityController,
+  ROOM_ACTIVITIES,
+  type RoomActivity,
+} from '@/lib/room-activities';
 import type { Zone } from '@/lib/entity-schema';
 
 type View = 'room' | 'close' | 'follow';
@@ -49,6 +52,9 @@ export default function AgentScene({
   });
   const [view, setView] = useState<View>(compact ? 'close' : 'room');
   const [notice, setNotice] = useState('');
+  const [autonomy, setAutonomy] = useState(true);
+  const [activityLabel, setActivityLabel] = useState('Here with you');
+  const [activity, setActivity] = useState<RoomActivity | null>(null);
   const host = useRef<HTMLDivElement>(null);
   const fallback = useRef<HTMLParagraphElement>(null);
   const latest = useRef({
@@ -59,14 +65,27 @@ export default function AgentScene({
     paused,
     settings,
     view,
+    autonomy,
   });
   const commands = useRef<{
     view: (v: View) => void;
     action: (a: RoomAction) => void;
+    activity: (a: RoomActivity) => void;
+    stop: () => void;
+    greet: () => void;
   } | null>(null);
   useEffect(() => {
-    latest.current = { zone, busy, greeting, onMove, paused, settings, view };
-  }, [zone, busy, greeting, onMove, paused, settings, view]);
+    latest.current = {
+      zone,
+      busy,
+      greeting,
+      onMove,
+      paused,
+      settings,
+      view,
+      autonomy,
+    };
+  }, [zone, busy, greeting, onMove, paused, settings, view, autonomy]);
   useEffect(() => {
     const element = host.current;
     if (!element) return;
@@ -79,6 +98,7 @@ export default function AgentScene({
       });
     } catch {
       if (fallback.current) fallback.current.hidden = false;
+      queueMicrotask(() => setModelState('error'));
       return;
     }
     renderer.setPixelRatio(Math.min(devicePixelRatio, compact ? 1.5 : 1.75));
@@ -117,13 +137,24 @@ export default function AgentScene({
     scene.add(agent);
     const initial = ROOM_LOCATIONS[latest.current.zone];
     agent.position.set(initial.x, 0.015, initial.z);
+    const behavior = new RoomActivityController(initial);
+    let narrow = element.clientWidth < 700;
     function frameView(v: View) {
       const p = agent.position;
       if (v === 'room') {
-        camera.position.set(8.5, 6.5, 10.5);
-        controls.target.set(0, 0.7, -0.3);
+        if (narrow) {
+          camera.position.set(p.x + 2.7, 2.7, p.z + 4.0);
+          controls.target.set(p.x, 0.9, p.z);
+        } else {
+          camera.position.set(8.5, 6.5, 10.5);
+          controls.target.set(0, 0.7, -0.3);
+        }
       } else if (v === 'close') {
-        camera.position.set(p.x + 0.32, p.y + 1.5, p.z + 1.7);
+        const face = new THREE.Vector3(0.32, 0, 1.7).applyAxisAngle(
+          new THREE.Vector3(0, 1, 0),
+          agent.rotation.y,
+        );
+        camera.position.set(p.x + face.x, p.y + 1.5, p.z + face.z);
         controls.target.set(p.x, p.y + 1.3, p.z);
       } else {
         camera.position.set(p.x + 1.2, 1.62, p.z + 3.7);
@@ -147,7 +178,7 @@ export default function AgentScene({
         else audio.pause();
       } else setSettings((s) => ({ ...s, [action]: !s[action] }));
     };
-    commands.current = { view: frameView, action: act };
+
     let disposed = false;
     const request = new AbortController();
     let companion: Awaited<ReturnType<typeof loadCompanion>> | undefined;
@@ -183,19 +214,14 @@ export default function AgentScene({
     marker.position.y = 0.04;
     marker.visible = false;
     scene.add(marker);
-    let path: RoomPoint[] = [],
-      pathIndex = 0,
-      lastZone = latest.current.zone;
+    let lastZone = latest.current.zone;
     let ownZone: Zone | undefined;
     let markUntil = 0;
     const walkTo = (destination: RoomPoint, report = true) => {
-      const planned = findRoomPath(agent.position, destination);
-      if (!planned.length) {
+      if (!behavior.walkTo(destination)) {
         setNotice('Choose an open place on the floor.');
         return;
       }
-      path = planned;
-      pathIndex = 0;
       marker.position.set(destination.x, 0.04, destination.z);
       marker.visible = true;
       markUntil = performance.now() + 5000;
@@ -205,6 +231,28 @@ export default function AgentScene({
         ownZone = reported === lastZone ? undefined : reported;
         latest.current.onMove?.(reported);
       }
+    };
+    const chooseActivity = (next: RoomActivity) => {
+      if (behavior.choose(next)) {
+        setNotice('');
+        marker.visible = false;
+        if (latest.current.view === 'close') {
+          setView('follow');
+          frameView('follow');
+        }
+      } else
+        setNotice(
+          'Nia could not find a clear way there. Try an open place first.',
+        );
+    };
+    commands.current = {
+      view: frameView,
+      action: act,
+      activity: chooseActivity,
+      stop: () => behavior.stop(),
+      greet: () => {
+        greetingUntil = performance.now() + 3500;
+      },
     };
     const pointerStart = new THREE.Vector2(),
       pointer = new THREE.Vector2(),
@@ -243,7 +291,9 @@ export default function AgentScene({
         return materials.some((m) => m.opacity >= 0.2);
       });
       const first = hits[0];
-      if (first?.object.userData.roomAction)
+      if (first?.object.userData.niaActivity)
+        chooseActivity(first.object.userData.niaActivity as RoomActivity);
+      else if (first?.object.userData.roomAction)
         act(first.object.userData.roomAction as RoomAction);
       else {
         const floorHit = ray.intersectObject(room.floor)[0];
@@ -317,6 +367,11 @@ export default function AgentScene({
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      const nextNarrow = w < 700;
+      if (nextNarrow !== narrow) {
+        narrow = nextNarrow;
+        frameView(latest.current.view);
+      }
     };
     const observer = new ResizeObserver(resize);
     observer.observe(element);
@@ -333,6 +388,8 @@ export default function AgentScene({
     const priorPosition = new THREE.Vector3(),
       direction = new THREE.Vector3(),
       cameraForward = new THREE.Vector3();
+    let shownLabel = '',
+      shownActivity: RoomActivity | null = null;
     const animate = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
@@ -348,15 +405,18 @@ export default function AgentScene({
           else walkTo(ROOM_LOCATIONS[lastZone], false);
         }
         priorPosition.copy(agent.position);
-        let moving = false;
         const horizontal =
           Number(keys.has('d') || keys.has('arrowright')) -
           Number(keys.has('a') || keys.has('arrowleft'));
         const vertical =
           Number(keys.has('w') || keys.has('arrowup')) -
           Number(keys.has('s') || keys.has('arrowdown'));
+        behavior.tick(dt, {
+          autonomy: !compact && !!companion && latest.current.autonomy,
+          blocked: latest.current.busy || !!horizontal || !!vertical,
+          reduced,
+        });
         if ((horizontal || vertical) && !reduced) {
-          path = [];
           camera.getWorldDirection(cameraForward);
           cameraForward.y = 0;
           cameraForward.normalize();
@@ -365,46 +425,33 @@ export default function AgentScene({
             .multiplyScalar(horizontal)
             .addScaledVector(cameraForward, vertical)
             .normalize();
-          const next = {
-            x: agent.position.x + direction.x * dt * 1.05,
-            z: agent.position.z + direction.z * dt * 1.05,
-          };
-          if (canStand(next)) {
-            agent.position.x = next.x;
-            agent.position.z = next.z;
-            moving = true;
-          }
-        } else if (pathIndex < path.length) {
-          if (reduced) {
-            const end = path[path.length - 1];
-            agent.position.set(end.x, 0.015, end.z);
-            pathIndex = path.length;
-          } else {
-            const p = path[pathIndex];
-            direction.set(p.x - agent.position.x, 0, p.z - agent.position.z);
-            const distance = direction.length(),
-              travel = dt * 1.05;
-            if (distance <= travel) {
-              agent.position.x = p.x;
-              agent.position.z = p.z;
-              pathIndex++;
-            } else agent.position.addScaledVector(direction, travel / distance);
-            moving = true;
-          }
+          behavior.steer(direction.x, direction.z, dt);
+        }
+        agent.position.set(behavior.position.x, 0.015, behavior.position.z);
+        const moving = behavior.moving;
+        const activeActivity =
+          behavior.activity && behavior.phase !== 'walking'
+            ? behavior.activity
+            : null;
+        if (behavior.label !== shownLabel) {
+          shownLabel = behavior.label;
+          setActivityLabel(shownLabel);
+        }
+        if (behavior.activity !== shownActivity) {
+          shownActivity = behavior.activity;
+          setActivity(shownActivity);
         }
         if (latest.current.greeting !== lastGreeting) {
           lastGreeting = latest.current.greeting;
           greetingUntil = now + 3500;
         }
-        const yaw = moving
-          ? Math.atan2(
-              agent.position.x - priorPosition.x,
-              agent.position.z - priorPosition.z,
-            )
-          : Math.atan2(
-              camera.position.x - agent.position.x,
-              camera.position.z - agent.position.z,
-            );
+        const yaw =
+          moving || activeActivity
+            ? behavior.facing
+            : Math.atan2(
+                camera.position.x - agent.position.x,
+                camera.position.z - agent.position.z,
+              );
         const turn = Math.atan2(
           Math.sin(yaw - agent.rotation.y),
           Math.cos(yaw - agent.rotation.y),
@@ -420,8 +467,21 @@ export default function AgentScene({
                 ? 'wave'
                 : 'idle',
           reduced,
+          activeActivity
+            ? {
+                activity: activeActivity,
+                blend: behavior.blend,
+                seatHeight: ROOM_ACTIVITIES[activeActivity].seatHeight,
+                time: behavior.elapsed,
+                transitioning:
+                  behavior.phase === 'settling' || behavior.phase === 'leaving',
+              }
+            : undefined,
         );
-        if (latest.current.view === 'follow') {
+        if (
+          latest.current.view === 'follow' ||
+          (narrow && latest.current.view === 'room')
+        ) {
           const delta = agent.position.clone().sub(priorPosition);
           camera.position.add(delta);
           controls.target.add(delta);
@@ -438,8 +498,10 @@ export default function AgentScene({
           b.maxZ,
         );
         controls.target.y = THREE.MathUtils.clamp(controls.target.y, 0.3, 2.5);
-        marker.visible = now < markUntil && pathIndex < path.length;
+        marker.visible =
+          now < markUntil && behavior.phase === 'walking' && !behavior.activity;
         controls.update();
+        room.setActivity(activeActivity);
         room.update(dt, camera, reduced);
         renderer.render(scene, camera);
       }
@@ -476,91 +538,134 @@ export default function AgentScene({
     commands.current?.view(next);
   };
   return (
-    <div
-      className={`agent-world${compact ? ' agent-world-compact' : ''}`}
-      ref={host}
-    >
-      {modelState !== 'ready' && (
-        <output className="character-loading">
-          <span>
-            {modelState === 'loading'
-              ? 'Preparing Nia’s room…'
-              : 'Her 3D appearance could not load.'}
-          </span>
-          {modelState === 'error' && (
-            <button
-              onClick={() => {
-                setModelState('loading');
-                setAttempt((n) => n + 1);
-              }}
-            >
-              Try again
-            </button>
-          )}
-        </output>
-      )}
+    <div className={`agent-world${compact ? ' agent-world-compact' : ''}`}>
+      <div className="scene-viewport" ref={host}>
+        {modelState !== 'ready' && (
+          <output className="character-loading">
+            <span>
+              {modelState === 'loading'
+                ? 'Preparing Nia’s room…'
+                : 'Her 3D appearance could not load.'}
+            </span>
+            {modelState === 'error' && (
+              <button
+                onClick={() => {
+                  setModelState('loading');
+                  setAttempt((n) => n + 1);
+                }}
+              >
+                Try again
+              </button>
+            )}
+          </output>
+        )}
+        <p className="world-fallback" hidden ref={fallback}>
+          3D is unavailable on this device. Memory and conversations are still
+          available.
+        </p>
+      </div>
       {!compact && (
         <div className="room-controls" aria-label="Room controls">
-          <div className="room-control-group" aria-label="Light">
-            {(['day', 'sunset', 'night'] as RoomLight[]).map((light) => (
+          <div className="room-activity-bar">
+            <output className="room-activity-status" aria-live="polite">
+              {activityLabel}
+            </output>
+            <label className="room-autonomy">
+              <input
+                type="checkbox"
+                checked={autonomy}
+                onChange={(e) => setAutonomy(e.target.checked)}
+              />
+              Let Nia choose
+            </label>
+          </div>
+          <div className="room-activity-actions">
+            <label className="sr-only" htmlFor="nia-activity">
+              Nia’s activity
+            </label>
+            <select
+              id="nia-activity"
+              value={activity ?? ''}
+              disabled={modelState !== 'ready'}
+              onChange={(e) =>
+                e.target.value
+                  ? commands.current?.activity(e.target.value as RoomActivity)
+                  : commands.current?.stop()
+              }
+            >
+              <option value="">Take a walk</option>
+              {(Object.keys(ROOM_ACTIVITIES) as RoomActivity[]).map((id) => (
+                <option value={id} key={id}>
+                  {ROOM_ACTIVITIES[id].label}
+                </option>
+              ))}
+            </select>
+            <button
+              disabled={modelState !== 'ready'}
+              onClick={() => commands.current?.greet()}
+            >
+              Wave hello
+            </button>
+          </div>
+          <details className="room-options">
+            <summary>Light, sound & view</summary>
+            <div className="room-control-group" aria-label="Light">
+              {(['day', 'sunset', 'night'] as RoomLight[]).map((light) => (
+                <button
+                  key={light}
+                  aria-pressed={settings.light === light}
+                  onClick={() => setSettings((s) => ({ ...s, light }))}
+                >
+                  {light === 'sunset'
+                    ? 'Golden hour'
+                    : light === 'day'
+                      ? 'Daylight'
+                      : 'Night'}
+                </button>
+              ))}
+            </div>
+            <div className="room-control-group" aria-label="View">
+              {(['room', 'close', 'follow'] as View[]).map((mode) => (
+                <button
+                  key={mode}
+                  aria-pressed={view === mode}
+                  onClick={() => selectView(mode)}
+                >
+                  {mode === 'room'
+                    ? 'Room'
+                    : mode === 'close'
+                      ? 'Portrait'
+                      : 'Follow'}
+                </button>
+              ))}
+            </div>
+            <div className="room-control-group" aria-label="Objects">
               <button
-                key={light}
-                aria-pressed={settings.light === light}
-                onClick={() => setSettings((s) => ({ ...s, light }))}
+                aria-pressed={settings.lamp}
+                onClick={() => commands.current?.action('lamp')}
               >
-                {light === 'sunset'
-                  ? 'Golden hour'
-                  : light === 'day'
-                    ? 'Daylight'
-                    : 'Night'}
+                Lamp
               </button>
-            ))}
-          </div>
-          <div className="room-control-group" aria-label="View">
-            {(['room', 'close', 'follow'] as View[]).map((mode) => (
               <button
-                key={mode}
-                aria-pressed={view === mode}
-                onClick={() => selectView(mode)}
+                aria-pressed={settings.curtains}
+                onClick={() => commands.current?.action('curtains')}
               >
-                {mode === 'room'
-                  ? 'Room'
-                  : mode === 'close'
-                    ? 'Portrait'
-                    : 'Follow'}
+                Curtains
               </button>
-            ))}
-          </div>
-          <div className="room-control-group" aria-label="Objects">
-            <button
-              aria-pressed={settings.lamp}
-              onClick={() => commands.current?.action('lamp')}
-            >
-              Lamp
-            </button>
-            <button
-              aria-pressed={settings.curtains}
-              onClick={() => commands.current?.action('curtains')}
-            >
-              Curtains
-            </button>
-            <button
-              aria-pressed={settings.music}
-              onClick={() => commands.current?.action('record')}
-            >
-              {settings.music ? 'Pause record' : 'Play record'}
-            </button>
-          </div>
-          <p className="room-instruction">
-            Select the floor to walk. Drag to explore.
-          </p>
+              <button
+                aria-pressed={settings.music}
+                onClick={() => commands.current?.action('record')}
+              >
+                {settings.music ? 'Pause record' : 'Play record'}
+              </button>
+            </div>
+            <p className="room-instruction">
+              Select the floor to walk. Drag to explore.
+            </p>
+          </details>
           {notice && <output className="room-notice">{notice}</output>}
         </div>
       )}
-      <p className="world-fallback" hidden ref={fallback}>
-        3D is unavailable on this device. Memory and conversations are still
-        available.
-      </p>
     </div>
   );
 }

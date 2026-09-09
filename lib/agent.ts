@@ -226,6 +226,6 @@ export function demoReply(
   return {
     workspace: w,
     reply:
-      'Demo mode understands a small set of experiment commands: “Try Moon gravity”, “Set length to 2”, “Build a spring”, “Explain the result”, and “Remember: …”. Connect a model for open-ended conversation.',
+      'The experiment controls accept commands such as “Try Moon gravity”, “Set length to 2”, “Build a spring”, “Explain the result”, and “Remember: …”. Connect a model for open-ended conversation.',
   };
 }

@@ -57,3 +57,5 @@ GitHub Actions is configured to run the same check on pushes and pull requests, 
 - Ollama through the shared service runs only in development. Public deployment needs an independently reachable inference service.
 - No automatic production backups, restored-backup acceptance test, edge abuse controls or operational monitoring are delivered by the check workflow.
 - Applied database migrations are immutable. Add reviewed migrations for future schema changes.
+
+`lib/room-activities.ts` coordinates navigation and furniture transitions. `lib/companion-interaction.ts` layers two-bone contact and book/keyboard interaction over the imported motion clips. Its session state is separate from persisted workspace actions. `app/styles/room-layout.css` reserves canvas space independently of controls and conversation.

@@ -26,7 +26,7 @@ npm run db:setup
 npm run dev -- --port 3001
 ```
 
-Open **http://localhost:3001/space**. Demo mode runs without a model. The local database is created from committed migrations; no cloud account is needed for development.
+Open **http://localhost:3001/space**. Room controls work without a model; conversations require a connection. The local database is created from committed migrations; no cloud account is needed for development.
 
 For real local inference, install Ollama. Keep its service running in one terminal and download the model from another:
 
@@ -35,7 +35,7 @@ npm run model:serve
 ```
 
 ```sh
-npm run model:pull
+npm run model:pull -- <your-model>
 ```
 
 Create `.dev.vars` with:
@@ -43,7 +43,7 @@ Create `.dev.vars` with:
 ```dotenv
 FIELD_AI_ENABLED="true"
 FIELD_AI_PROVIDER="ollama"
-FIELD_AI_MODEL="qwen3.5:9b"
+FIELD_AI_MODEL="your-model"
 FIELD_AI_CONCURRENCY="1"
 FIELD_AI_VISITOR_TURNS="100"
 ```

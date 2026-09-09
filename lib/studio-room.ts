@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import type { RoomActivity } from './room-activities';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { disposeModel } from './companion-model';
 
@@ -213,12 +214,20 @@ export function createStudioRoom(
   for (const z of [-0.73, 1.33])
     for (const x of [-4.14, -3.32])
       cylinder(0.035, 0.025, 0.2, walnut, [x, 0.1, z]);
-  box(1.22, 0.24, 2.9, green, [-3.75, 0.33, 0.3], 0.1);
+  box(1.22, 0.24, 2.9, green, [-3.75, 0.33, 0.3], 0.1).userData.niaActivity =
+    'read';
   box(0.2, 0.72, 2.85, green, [-4.3, 0.67, 0.3], 0.08);
   for (const z of [-1.02, 1.62])
     box(1.22, 0.5, 0.25, green, [-3.75, 0.61, z], 0.1);
   for (let i = 0; i < 3; i++) {
-    box(0.92, 0.16, 0.78, green, [-3.64, 0.51, -0.49 + i * 0.79], 0.08);
+    box(
+      0.92,
+      0.16,
+      0.78,
+      green,
+      [-3.64, 0.51, -0.49 + i * 0.79],
+      0.08,
+    ).userData.niaActivity = i === 2 ? 'rest' : 'read';
     const pillow = box(
       0.18,
       0.49,
@@ -250,14 +259,25 @@ export function createStudioRoom(
     for (const z of [-3.55, -2.9])
       cylinder(0.028, 0.023, 0.74, black, [x, 0.37, z]);
   box(0.85, 0.09, 0.16, walnut, [-2.8, 0.11, -3.35]);
-  box(0.79, 0.48, 0.035, black, [-2.82, 1.19, -3.42]);
+  box(0.79, 0.48, 0.035, black, [-2.82, 1.19, -3.42]).userData.niaActivity =
+    'code';
   const screenMaterial = new THREE.MeshStandardMaterial({
     color: '#1d2630',
     emissive: '#746381',
     emissiveIntensity: 0.35,
     roughness: 0.35,
   });
-  box(0.74, 0.42, 0.008, screenMaterial, [-2.82, 1.19, -3.398]);
+  box(
+    0.74,
+    0.42,
+    0.008,
+    screenMaterial,
+    [-2.82, 1.19, -3.398],
+  ).userData.niaActivity = 'code';
+  const cursor = box(0.008, 0.026, 0.004, paper, [-2.61, 1.1, -3.39]);
+  cursor.visible = false;
+  let niaActivity: RoomActivity | null = null;
+  let activityTime = 0;
   cylinder(0.022, 0.03, 0.22, brass, [-2.82, 0.9, -3.43]);
   box(0.3, 0.016, 0.2, black, [-2.82, 0.812, -3.36]);
   for (let i = 0; i < 5; i++)
@@ -284,8 +304,10 @@ export function createStudioRoom(
   const pen = cylinder(0.006, 0.006, 0.18, brass, [-1.93, 0.833, -3.06]);
   pen.rotation.x = Math.PI / 2;
   pen.rotation.z = -0.3;
-  box(0.6, 0.12, 0.6, violet, [-2.8, 0.46, -2.3], 0.06);
-  box(0.59, 0.5, 0.1, violet, [-2.8, 0.74, -2.04], 0.06);
+  box(0.6, 0.12, 0.6, violet, [-2.8, 0.46, -2.3], 0.06).userData.niaActivity =
+    'code';
+  box(0.59, 0.5, 0.1, violet, [-2.8, 0.74, -2.04], 0.06).userData.niaActivity =
+    'code';
   for (const x of [-3.03, -2.57])
     for (const z of [-2.5, -2.1])
       cylinder(0.018, 0.012, 0.4, walnut, [x, 0.2, z]);
@@ -576,6 +598,9 @@ export function createStudioRoom(
     root,
     floor,
     pickables,
+    setActivity(activity: RoomActivity | null) {
+      niaActivity = activity;
+    },
     setSettings(settings: RoomSettings) {
       current = settings;
       const p = PALETTES[settings.light];
@@ -599,6 +624,11 @@ export function createStudioRoom(
       cityWindow.emissiveIntensity = settings.light === 'night' ? 1.7 : 0.02;
     },
     update(dt: number, camera: THREE.Camera, reduced: boolean) {
+      if (!reduced) activityTime += dt;
+      cursor.visible =
+        niaActivity === 'code' &&
+        (reduced || Math.sin(activityTime * 5) > -0.2);
+      screenMaterial.emissiveIntensity = niaActivity === 'code' ? 0.7 : 0.35;
       const desired = current.curtains ? 1 : 0.16;
       curtainAmount = reduced
         ? desired

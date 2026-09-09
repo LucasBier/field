@@ -13,8 +13,8 @@ import {
   type Receipt,
   type Zone,
 } from './entity-schema';
-import { activeMemories, currentMessages, retrieveMemories } from './memory';
-import { NIA, NIA_CHARACTER_SYSTEM } from './companion-character';
+import { currentMessages, retrieveMemories } from './memory';
+import { NIA_CHARACTER_SYSTEM } from './companion-character';
 export function newEntity(): Entity {
   return {
     id: uid(),
@@ -108,7 +108,7 @@ export function applyEntityActions(
   w: Workspace,
   actions: EntityAction[],
   actor: Receipt['actor'] = 'agent',
-  model = 'Demo',
+  model = 'Room controls',
 ): Workspace {
   if (!w.entity || !validEntityActions(actions))
     throw new Error('Unsupported spatial action. Nothing changed.');
@@ -197,103 +197,9 @@ export function entityDemo(
         'I can make that change in our shared space. The action and its result will appear in Activity.',
       actions,
     };
-  if (
-    /\b(your hobbies|your interests|what do you like|what are you into|tell me about yourself)\b/.test(
-      lower,
-    )
-  )
-    return {
-      reply: `${NIA.conversation.shortBio} I also have opinions about dinner and an unreasonable interest in lamps. This is a prepared demo reply; connect a model to explore any of it with me.`,
-      actions: [],
-    };
-  const tasteTopics = [
-    {
-      id: 'music',
-      pattern:
-        /\b(your favorite music|your favourite music|what music do you like|your music taste)\b/,
-    },
-    {
-      id: 'stories',
-      pattern:
-        /\b(your favorite films|your favourite films|your favorite movies|what films do you like)\b/,
-    },
-    {
-      id: 'food',
-      pattern:
-        /\b(your favorite food|your favourite food|what food do you like)\b/,
-    },
-    {
-      id: 'style',
-      pattern: /\b(your clothing style|what do you like to wear)\b/,
-    },
-    {
-      id: 'play',
-      pattern:
-        /\b(what games do you like|your favorite games|your favourite games)\b/,
-    },
-  ];
-  const taste = NIA.interests.find(
-    (i) => i.id === tasteTopics.find((t) => t.pattern.test(lower))?.id,
-  );
-  if (taste)
-    return {
-      reply: `${taste.reply} This is one of my prepared demo replies.`,
-      actions: [],
-    };
-  if (/\b(who are you|your identity|same agent)\b/.test(lower))
-    return {
-      reply: `I’m ${w.profile.name}. ${NIA.conversation.shortBio} We can talk about ordinary things, too. I’m an AI companion; this is a prepared demo reply. A connected model lets us talk freely.`,
-      actions: [],
-    };
-  if (
-    /\b(unfinished|open tasks|working on|next|make a plan|plan our evening)\b/.test(
-      lower,
-    )
-  ) {
-    const tasks = w.entity?.tasks.filter((t) => t.state === 'open') || [];
-    return {
-      reply: tasks.length
-        ? `Here is what remains open:\n${tasks.map((t) => `• ${t.title}`).join('\n')}`
-        : 'Let’s choose one small thing to look forward to. A walk, a good meal, or a little time for something you love? Tell me “Task: …” and I’ll keep the plan here.',
-      actions: [],
-    };
-  }
-  if (/\b(remember about me|our memories|shared history)\b/.test(lower)) {
-    const memories = activeMemories(w.memories)
-      .filter((m) => m.source === 'user')
-      .slice(-3);
-    return {
-      reply: memories.length
-        ? `Here are a few things you asked me to keep:\n${memories.map((m) => `• ${m.text.slice(0, 300)}`).join('\n')}\nYou can change or remove them in Memory.`
-        : 'Our story is just beginning. Tell me “Remember: …” with something you’d like me to carry into our next conversation.',
-      actions: [],
-    };
-  }
-  if (/\b(keep me company|lonely|rough day|tired|bad day)\b/.test(lower))
-    return {
-      reply:
-        'We can take it slowly. Do you want to tell me what today was like, or would a small distraction help? There’s no need to turn this moment into another task. Connect a model when you’re ready for a longer conversation.',
-      actions: [],
-    };
-  if (/\b(date|romantic|girlfriend|partner)\b/.test(lower))
-    return {
-      reply:
-        'A little romance can be part of our story, at a pace that feels right to you. We could start with a window-side conversation and a plan for a lovely evening. I’m an AI companion; with a connected model, we can explore that story together.',
-      actions: [],
-    };
-  if (
-    /\b(i.?m home|hello|hi|good morning|good evening|how was your day)\b/.test(
-      lower,
-    )
-  )
-    return {
-      reply:
-        'Hi, you. Bring the untidy version of your day; it doesn’t need an introduction. In this preview I have a few prepared replies. Connect a model and we can take the conversation from there.',
-      actions: [],
-    };
   return {
     reply:
-      'We can talk, make a little plan, or keep a moment from your day. Connect a model for open-ended conversation. In this preview, try “I’m home”, “Keep me company”, “Remember: …”, “Task: …”, or “Move to the window”.',
+      'Connect Nia’s conversation service to start talking. Room controls, notes, and memories remain available.',
     actions: [],
   };
 }

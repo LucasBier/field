@@ -62,10 +62,10 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
         w,
         'connection_selected',
         next.provider === 'demo'
-          ? 'Selected demo mode. No model requests.'
-          : `Selected ${next.provider === 'site' ? 'site-managed' : next.provider === 'ollama' ? 'local Ollama' : 'hosted DeepSeek'} model ${next.model}. Identity unchanged.`,
+          ? 'Disconnected conversation service. Room controls remain available.'
+          : `Selected ${next.provider === 'site' ? 'Field' : next.provider === 'ollama' ? 'local' : 'hosted'} connection. Identity unchanged.`,
         'you',
-        next.provider === 'demo' ? 'Demo' : next.model,
+        next.provider === 'demo' ? 'Room controls' : 'Nia connection',
       ),
     );
     chosenConnection.current = true;
@@ -79,6 +79,16 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
   const send = async () => {
     if (disabled || !message.trim() || active.current) return;
     const text = message.trim();
+    if (
+      connection.provider === 'demo' &&
+      !/^remember\s*[: ,]/i.test(text) &&
+      !entityDemo(text, current.current).actions.length
+    ) {
+      setNotice(
+        'Nia’s conversation service is not connected. Connect it to start talking. Your room, notes, and memories are available.',
+      );
+      return;
+    }
     const controller = new AbortController();
     active.current = controller;
     setBusy(true);
@@ -216,14 +226,11 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
   );
   const modelLabel =
     connection.provider === 'demo'
-      ? 'Demo mode'
-      : connection.provider === 'site'
-        ? site?.provider === 'ollama'
-          ? 'Local · ' + connection.model
-          : 'Nia · Field connection'
-        : connection.provider === 'ollama'
-          ? 'Local · ' + connection.model
-          : 'Hosted · ' + connection.model;
+      ? 'Connect Nia'
+      : connection.provider === 'ollama' ||
+          (connection.provider === 'site' && site?.provider === 'ollama')
+        ? 'Nia · Local connection'
+        : 'Nia · Connected';
   const localConnection =
     connection.provider === 'ollama' ||
     (connection.provider === 'site' && site?.provider === 'ollama');

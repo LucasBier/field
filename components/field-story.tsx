@@ -635,7 +635,7 @@ export function SetupConsole() {
             <p>
               Open{' '}
               <a href="http://localhost:3001/space">localhost:3001/space</a>.
-              Demo mode works without a model key.
+              The room works without a model key.
             </p>
           </TabsContent>
           <TabsContent value="connect">

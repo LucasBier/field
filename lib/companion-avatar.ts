@@ -2,7 +2,13 @@ import * as THREE from 'three';
 import { NIA } from './companion-character';
 import { NIA_MODEL, loadCompanionModel } from './companion-model';
 
-export type CompanionPose = 'idle' | 'walk' | 'think' | 'wave';
+export type CompanionPose =
+  | 'idle'
+  | 'walk'
+  | 'think'
+  | 'wave'
+  | 'sit'
+  | 'stand';
 
 type Ring = [height: number, width: number, depth: number];
 
@@ -541,6 +547,8 @@ export function createCompanion() {
     idle: 1,
     walk: 0,
     think: 0,
+    sit: 0,
+    stand: 0,
     wave: 0,
   };
   let disposed = false;

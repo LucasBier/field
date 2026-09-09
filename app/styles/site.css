@@ -391,8 +391,12 @@
   mix-blend-mode: multiply;
 }
 .field-landing .field-wordmark {
-  background: var(--field-paper);
-  padding: 6px 12px;
+  background: transparent;
+  padding: 0;
+}
+.field-landing .field-wordmark img {
+  filter: grayscale(1) invert(1) contrast(12);
+  mix-blend-mode: screen;
 }
 .field-site-footer .field-wordmark {
   width: 180px;

@@ -7,3 +7,5 @@
 @import './styles/theme.css';
 @import './styles/lab.css';
 @import './styles/space.css';
+
+@import './styles/room-layout.css';

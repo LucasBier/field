@@ -24,7 +24,7 @@ export const HOSTED_LEASE_MS = 90000;
 export const HOSTED_TIMEOUT_MS = 45000;
 export const HOSTED_MESSAGES = {
   unavailable:
-    'Shared conversations are not available yet. You can explore the demo or connect your own model.',
+    'Shared conversations are not available yet. Room controls are available. Connect a model to start a conversation.',
   local_unavailable:
     'The local model is not ready. Start Ollama and check that the selected model is installed.',
   context_limit:
@@ -88,7 +88,7 @@ export function hostedConfig(
   if (provider === 'ollama') {
     // Cloudflare production cannot reach a model on the developer's computer.
     if (!development) return null;
-    const model = env.FIELD_AI_MODEL || 'qwen3.5:9b';
+    const model = env.FIELD_AI_MODEL || '';
     if (
       !/^[A-Za-z0-9][A-Za-z0-9._:-]{0,100}$/.test(model) ||
       /cloud/i.test(model)

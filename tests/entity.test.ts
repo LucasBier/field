@@ -105,11 +105,11 @@ await test('model handoffs carry the character contract without promoting person
   }
   assert.deepEqual(w, before);
 });
-await test('companion demo recalls only saved user memories and never creates a relationship', () => {
+await test('disconnected conversation has no scripted persona responses or access to saved memories', () => {
   const w = ensureEntity(initialWorkspace());
   assert.match(
     entityDemo('What do you remember about me?', w).reply,
-    /just beginning/,
+    /Connect Nia/,
   );
   w.memories.push({
     id: 'day',
@@ -119,7 +119,8 @@ await test('companion demo recalls only saved user memories and never creates a 
   });
   const saved = JSON.stringify(w);
   const reply = entityDemo('What do you remember about me?', w);
-  assert.match(reply.reply, /I like slow mornings/);
+  assert.match(reply.reply, /Connect Nia/);
+  assert.doesNotMatch(reply.reply, /I like slow mornings/);
   assert.deepEqual(reply.actions, []);
   assert.deepEqual(entityDemo('Can you be my partner?', w).actions, []);
   assert.equal(JSON.stringify(w), saved);

@@ -91,7 +91,7 @@ export default function AgentConnectionDialog({
                 : 'The local model is offline. Start Ollama on this computer to talk with Nia.'
               : site?.enabled
                 ? 'Provided by Field. No model key or installation needed. Your selected conversation context is sent to DeepSeek.'
-                : 'Shared conversations are not enabled on this installation yet. You can explore the demo or use your own model below.'}
+                : 'Shared conversations are not enabled on this installation yet. Room controls are available. Connect your model below to start talking.'}
           </p>
           {site?.enabled && (
             <>
@@ -258,7 +258,9 @@ export default function AgentConnectionDialog({
           <CircleDot size={17} />
           <div>
             <strong>Explore without a model</strong>
-            <p>Deterministic demo commands. No inference calls.</p>
+            <p>
+              Keep room controls available while conversations are disconnected.
+            </p>
           </div>
           <Button
             variant="outline"
@@ -267,7 +269,7 @@ export default function AgentConnectionDialog({
               onOpenChange(false);
             }}
           >
-            Use demo
+            Disconnect
           </Button>
         </div>
       </DialogContent>

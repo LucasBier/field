@@ -3,9 +3,14 @@ import { spawn } from 'node:child_process';
 const mode = process.argv[2];
 if (!['serve', 'pull'].includes(mode))
   throw new Error('Use model:serve or model:pull.');
+const selectedModel = process.argv[3] || process.env.FIELD_AI_MODEL;
+if (mode === 'pull' && !selectedModel)
+  throw new Error(
+    'Provide your model identifier: npm run model:pull -- <your-model>',
+  );
 const child = spawn(
   'ollama',
-  mode === 'serve' ? ['serve'] : ['pull', 'qwen3.5:9b'],
+  mode === 'serve' ? ['serve'] : ['pull', selectedModel],
   {
     stdio: 'inherit',
     env: {

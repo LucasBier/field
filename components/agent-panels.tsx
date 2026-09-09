@@ -514,7 +514,7 @@ export default function AgentPanels({
                       </span>
                       <p>{r.detail}</p>
                       <small>
-                        {r.model} ·{' '}
+                        {r.actor === 'you' ? 'Room action' : 'Nia'} ·{' '}
                         {new Date(r.at).toLocaleTimeString('en-US', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -706,7 +706,7 @@ export default function AgentPanels({
                   >
                     <span>
                       {m.role === 'user' ? 'You' : workspace.profile.name} ·{' '}
-                      {m.mode === 'demo' ? 'Demo' : 'Model'}
+                      {m.mode === 'demo' ? 'Room action' : 'Reply'}
                       {(m.memoryVersion || 0) < (workspace.memoryVersion || 0)
                         ? ' · Before correction'
                         : ''}

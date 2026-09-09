@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Field — She remembers you. You still get to change.',
-  icons: { icon: '/favicon.svg' },
+  icons: { icon: '/brand/field-icon-v3.svg' },
   description:
     'A continuing relationship with Nia. Keep the memories you choose, correct what no longer fits, and carry your story across models and spaces.',
 };

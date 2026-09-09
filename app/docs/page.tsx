@@ -86,13 +86,13 @@ export default function Docs() {
             <CodeBlock
               label="Messages to send in Field"
               code={
-                'I’m home\nMove to the window\nRemember: I prefer quiet mornings\nTask: Plan a weekend walk'
+                'Move to the window\nRemember: I prefer quiet mornings\nTask: Plan a weekend walk'
               }
             />
             <p>
-              Demo mode recognizes a limited set of commands. Connect a model
-              for open-ended conversation. Tasks are saved to-dos; recording one
-              does not execute work outside Field.
+              Room controls recognize movement, notes, and memory commands.
+              Connect a model for open-ended conversation. Tasks are saved
+              to-dos; recording one does not execute work outside Field.
             </p>
           </div>
         </section>
@@ -116,8 +116,8 @@ export default function Docs() {
               >
                 Ollama
               </a>
-              , then start the local model service. Qwen3.5 9B is the starting
-              model for this setup; its download is about 6.6 GB. Keep the
+              , then serve your chosen or trained model locally. Use its exact
+              installed identifier in your private configuration. Keep the
               service running while you use Field.
             </p>
             <CodeBlock
@@ -126,7 +126,7 @@ export default function Docs() {
             />
             <CodeBlock
               label="Second terminal · download once"
-              code={'npm run model:pull'}
+              code={'ollama pull <your-model>'}
             />
             <p>
               Copy <code>.dev.vars.example</code> to <code>.dev.vars</code>,
@@ -138,7 +138,7 @@ export default function Docs() {
             <CodeBlock
               label=".dev.vars · local inference"
               code={
-                'FIELD_AI_ENABLED="true"\nFIELD_AI_PROVIDER="ollama"\nFIELD_AI_MODEL="qwen3.5:9b"\nFIELD_AI_CONCURRENCY="1"\nFIELD_AI_VISITOR_TURNS="100"'
+                'FIELD_AI_ENABLED="true"\nFIELD_AI_PROVIDER="ollama"\nFIELD_AI_MODEL="your-model"\nFIELD_AI_CONCURRENCY="1"\nFIELD_AI_VISITOR_TURNS="100"'
               }
             />
             <p>
@@ -176,7 +176,7 @@ export default function Docs() {
               or stopped attempts still use an allowance because the provider
               may have processed them. The server reserves an estimated maximum
               cost before each call; provider billing limits remain separate. An
-              unconfigured installation stays in demo mode.
+              unconfigured installation keeps conversation disconnected.
             </p>
           </div>
         </section>
@@ -204,13 +204,13 @@ export default function Docs() {
               }
             />
             <p>
-              Nia’s identity, interests, small contradictions, voice, portrait reference and palette live
-              in <code>lib/companion-character.ts</code>. Her complete
-              character, visual and voice specification is in{' '}
-              <code>docs/nia.md</code>. The runtime combines that definition
-              with the action contract in <code>lib/entity.ts</code>. Keep
-              permissions and response validation intact when changing her
-              manner.
+              Nia’s identity, interests, small contradictions, voice, portrait
+              reference and palette live in{' '}
+              <code>lib/companion-character.ts</code>. Her complete character,
+              visual and voice specification is in <code>docs/nia.md</code>. The
+              runtime combines that definition with the action contract in{' '}
+              <code>lib/entity.ts</code>. Keep permissions and response
+              validation intact when changing her manner.
             </p>
             <h3>Adjust the 3D appearance.</h3>
             <p>
@@ -286,7 +286,7 @@ export default function Docs() {
               concurrency limits are implemented. A public launch still needs a
               funded provider account, operational abuse controls and a
               deployment. Anonymous cookies do not provide cross-device account
-              recovery. Demo mode makes no model calls.
+              recovery. Disconnected room controls make no model calls.
             </p>
           </div>
         </section>

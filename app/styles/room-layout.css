@@ -1,0 +1,365 @@
+/* Scene pixels belong to Nia. Controls take their own rows, including on phones. */
+.agent-world {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.scene-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.scene-viewport canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.agent-world-compact .scene-viewport {
+  height: 100%;
+}
+.spatial-home {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  grid-template-rows: 76px minmax(0, 1fr) auto;
+  height: 100dvh;
+  background: #f6f2ec;
+}
+.spatial-home > .agent-world {
+  position: relative;
+  inset: auto;
+  grid-area: 2 / 1;
+}
+.spatial-home .space-header {
+  position: relative;
+  inset: auto;
+  grid-area: 1 / 1 / 2 / -1;
+  height: auto;
+  padding: 0 24px;
+  background: #f6f2ec;
+  border-bottom: 1px solid #e5dce9;
+}
+.spatial-home .home-brand {
+  font-size: 26px;
+}
+.spatial-home .field-mark {
+  color: #784be8;
+}
+.spatial-home .space-introduction {
+  position: relative;
+  inset: auto;
+  grid-area: 2 / 2;
+  padding: 28px 20px;
+  align-self: start;
+  max-width: none;
+}
+.spatial-home .space-introduction h1 {
+  font-size: 31px;
+}
+.spatial-home .space-introduction > p:first-child {
+  font-size: 11px;
+}
+.spatial-home .space-tool-dock {
+  position: relative;
+  inset: auto;
+  grid-area: 2 / 2;
+  transform: none;
+  align-self: end;
+  margin: 16px;
+  padding: 4px;
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+}
+.spatial-home .space-tool-dock > button,
+.spatial-home .space-tool-dock > a {
+  padding: 9px 12px;
+  min-height: 40px;
+}
+.spatial-home .space-tool-dock span {
+  display: inline;
+}
+.spatial-home .space-composer {
+  position: relative;
+  inset: auto;
+  grid-area: 3 / 1;
+  width: auto;
+  transform: none;
+  margin: 0;
+  padding: 12px 22px max(16px, env(safe-area-inset-bottom));
+  background: #f6f2ec;
+  border-top: 1px solid #e5dce9;
+}
+.spatial-home .space-composer-meta {
+  margin-top: 7px;
+  color: #6c6375;
+}
+.spatial-home .space-welcome {
+  margin: 0 0 8px;
+}
+.spatial-home .space-save {
+  position: relative;
+  inset: auto;
+  grid-area: 3 / 2;
+  align-self: end;
+  padding: 20px;
+  color: #696070;
+  flex-wrap: wrap;
+}
+.spatial-home .space-surface-label,
+.spatial-home .world-note-peek {
+  display: none;
+}
+.spatial-home .agent-speech {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.spatial-home .companion-prompts {
+  margin-bottom: 8px;
+}
+.room-controls {
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  width: auto;
+  padding: 10px 22px;
+  border: 0;
+  border-top: 1px solid #e5dce9;
+  border-radius: 0;
+  background: #f6f2ec;
+  backdrop-filter: none;
+  box-shadow: none;
+  flex: none;
+  display: block;
+}
+.room-activity-bar,
+.room-activity-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.room-activity-status {
+  color: #3b3045;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.room-autonomy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: #6b567d;
+}
+.room-autonomy input {
+  accent-color: #784be8;
+  width: 16px;
+  height: 16px;
+}
+.room-activity-actions {
+  justify-content: start;
+  margin-top: 8px;
+}
+.room-activity-actions select {
+  border: 1px solid #d7cbe1;
+  border-radius: 8px;
+  background: #fcf9ff;
+  color: #3e2c58;
+  font-size: 14px;
+  padding: 8px 28px 8px 10px;
+  min-height: 40px;
+  max-width: 70%;
+}
+.room-activity-actions > button {
+  color: #6b4c91;
+  font-size: 14px;
+  min-height: 40px;
+  padding: 6px;
+}
+.room-options {
+  margin-top: 6px;
+}
+.room-options summary {
+  cursor: pointer;
+  color: #70637c;
+  font-size: 13px;
+  padding: 5px 0;
+  width: fit-content;
+}
+.room-options[open] {
+  max-height: 182px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.room-control-group {
+  max-width: 480px;
+}
+.room-control-group button {
+  font-size: 13px;
+  min-height: 38px;
+}
+.room-instruction,
+.room-notice {
+  font-size: 12px;
+}
+.room-controls :focus-visible {
+  outline: 2px solid #784be8;
+  outline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .spatial-home {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 64px minmax(220px, 1fr) auto auto;
+    overflow-y: auto;
+  }
+  .spatial-home .space-header {
+    grid-area: 1 / 1;
+    padding: 0 14px;
+    gap: 8px;
+  }
+  .spatial-home .space-header nav {
+    gap: 2px;
+  }
+  .spatial-home .space-header nav button {
+    min-width: 38px;
+    width: 38px;
+    padding: 8px;
+  }
+  .spatial-home .space-header nav span {
+    display: none;
+  }
+  .spatial-home .space-agent-title,
+  .spatial-home .space-introduction {
+    display: none;
+  }
+  .spatial-home > .agent-world {
+    grid-area: 2 / 1;
+  }
+  .spatial-home .space-tool-dock {
+    grid-area: 3 / 1;
+    margin: 0;
+    border-top: 1px solid #e5dce9;
+    padding: 3px 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    overflow-x: auto;
+    gap: 0;
+    white-space: nowrap;
+    background: #f6f2ec;
+    border-radius: 0;
+  }
+  .spatial-home .space-tool-dock > button,
+  .spatial-home .space-tool-dock > a {
+    padding: 8px;
+    min-width: 42px;
+    flex: none;
+  }
+  .spatial-home .space-tool-dock span,
+  .spatial-home .space-tool-dock b {
+    display: none;
+  }
+  .spatial-home .space-tool-dock > button:nth-child(4) {
+    display: none;
+  }
+  .spatial-home .space-composer {
+    grid-area: 4 / 1;
+    padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+  }
+  .spatial-home .space-welcome,
+  .spatial-home .companion-prompts {
+    display: none;
+  }
+  .spatial-home .space-save {
+    display: none;
+  }
+  .spatial-home .space-save.has-error {
+    display: flex;
+    grid-area: 5 / 1;
+    background: #f9e7e8;
+    padding: 8px 12px;
+  }
+  .spatial-home .agent-speech {
+    max-height: 105px;
+    font-size: 14px;
+  }
+  .spatial-home .space-input textarea {
+    font-size: 16px;
+    min-height: 44px;
+    max-height: 110px;
+  }
+  .spatial-home .space-composer-meta > span {
+    display: none;
+  }
+  .room-controls {
+    padding: 7px 12px;
+  }
+  .room-activity-status {
+    font-size: 13px;
+  }
+  .room-autonomy {
+    font-size: 12px;
+  }
+  .room-activity-actions {
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .room-activity-actions select {
+    flex: 1;
+    max-width: none;
+    min-width: 0;
+    font-size: 14px;
+    min-height: 36px;
+  }
+  .room-activity-actions > button {
+    font-size: 13px;
+    white-space: nowrap;
+    min-height: 36px;
+  }
+  .room-options {
+    margin-top: 0;
+  }
+  .room-options[open] {
+    max-height: 130px;
+  }
+  .room-control-group button {
+    font-size: 12px;
+    min-height: 34px;
+  }
+}
+@media (max-height: 650px) and (max-width: 900px) {
+  .spatial-home {
+    grid-template-rows: 56px minmax(320px, 1fr) auto auto;
+  }
+}
+
+.spatial-home .space-sidebar {
+  grid-area: 2 / 2;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.spatial-home .space-sidebar .space-introduction {
+  flex: none;
+}
+.spatial-home .space-sidebar .space-tool-dock {
+  flex: none;
+  align-self: stretch;
+  margin-top: auto;
+}
+@media (max-width: 900px) {
+  .spatial-home .space-sidebar {
+    grid-area: 3 / 1;
+    overflow: visible;
+  }
+  .spatial-home .space-sidebar .space-tool-dock {
+    margin: 0;
+  }
+}

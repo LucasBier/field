@@ -107,7 +107,7 @@ await test('unverified events must skip and malformed, oversized, URL or mention
   assert.equal(postWeight('abc'), 3);
   assert.ok(postWeight('😀') >= 2);
 });
-await test('demo interests use the canon without changing history or creating actions', () => {
+await test('unconnected dialogue cannot substitute scripted interests for inference', () => {
   const w = initialWorkspace(),
     before = JSON.stringify(w);
   for (const question of [
@@ -117,7 +117,7 @@ await test('demo interests use the canon without changing history or creating ac
   ]) {
     const result = entityDemo(question, w);
     assert.deepEqual(result.actions, []);
-    assert.match(result.reply, /prepared demo/);
+    assert.match(result.reply, /Connect Nia/);
   }
   assert.equal(JSON.stringify(w), before);
 });
