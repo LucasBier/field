@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { CodeBlock } from '@/components/code-block';
+import { FieldBrand } from '@/components/field-brand';
 import { ConnectionGuide } from '@/components/connection-guide';
 
 export const metadata: Metadata = {
@@ -15,9 +16,7 @@ export default function Docs() {
     <main className="field-docs">
       <header className="field-site-nav">
         <Link href="/">← Overview</Link>
-        <Link href="/" className="field-wordmark">
-          FIELD<span>DOCUMENTATION</span>
-        </Link>
+        <FieldBrand priority />
         <Link href="/space">
           Open space <ArrowUpRight size={16} />
         </Link>
@@ -459,9 +458,7 @@ export default function Docs() {
         </section>
       </div>
       <footer className="field-site-footer">
-        <Link className="field-wordmark" href="/">
-          FIELD
-        </Link>
+        <FieldBrand />
         <span>One companion. A continuing story.</span>
         <Link href="/space">
           Meet Nia <ArrowUpRight size={15} />

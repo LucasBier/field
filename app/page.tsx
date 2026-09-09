@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { CodeBlock } from '@/components/code-block';
+import { FieldBrand } from '@/components/field-brand';
 import { SpatialPreview } from '@/components/spatial-preview';
 import {
   FieldMotion,
@@ -20,9 +21,7 @@ export default function Home() {
       <main className="field-landing">
         <header className="field-site-nav">
           <Link href="/docs">Documentation</Link>
-          <Link href="/" className="field-wordmark" aria-label="Field home">
-            FIELD<span>SPATIAL COMPANION</span>
-          </Link>
+          <FieldBrand priority />
           <Link href="/space">
             Open space <ArrowUpRight size={16} />
           </Link>
@@ -138,9 +137,7 @@ export default function Home() {
         </section>
         <FieldColophon />
         <footer className="field-site-footer">
-          <Link className="field-wordmark" href="/">
-            FIELD
-          </Link>
+          <FieldBrand />
           <span>One companion. A continuing story.</span>
           <Link href="/docs">
             Read the guide <ArrowUpRight size={15} />

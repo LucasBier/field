@@ -361,8 +361,8 @@
   min-height: 138px;
   padding: 34px 6%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
   gap: 24px;
 }
 .field-site-nav > a:not(.field-wordmark) {
@@ -372,24 +372,30 @@
   font-family: var(--field-serif);
   font-size: 19px;
   text-transform: uppercase;
-  padding-top: 8px;
 }
 .field-site-nav > a:last-child {
   justify-self: end;
 }
 .field-wordmark {
-  font-family: var(--field-serif);
-  text-align: center;
-  font-size: 36px;
-  line-height: 1;
-  letter-spacing: -2px;
-}
-.field-wordmark span {
   display: block;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  margin-top: 12px;
+  width: 252px;
+  max-width: 100%;
+  flex-shrink: 0;
+  justify-self: center;
+}
+.field-wordmark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  mix-blend-mode: multiply;
+}
+.field-landing .field-wordmark {
+  background: var(--field-paper);
+  padding: 6px 12px;
+}
+.field-site-footer .field-wordmark {
+  width: 180px;
 }
 .field-entry {
   max-width: 1440px;
@@ -620,15 +626,17 @@
 }
 @media (max-width: 650px) {
   .field-site-nav {
-    grid-template-columns: 1fr auto 1fr;
-    gap: 13px;
-    min-height: 108px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 22px 16px;
+    min-height: 0;
   }
-  .field-wordmark {
-    font-size: 29px;
+  .field-site-nav .field-wordmark {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: 192px;
   }
-  .field-wordmark span {
-    display: none;
+  .field-site-nav > a:not(.field-wordmark) {
+    grid-row: 2;
   }
   .field-site-nav > a:not(.field-wordmark) {
     font-family: var(--font-geist-sans), sans-serif;
@@ -669,6 +677,10 @@
   .field-site-footer {
     flex-wrap: wrap;
     padding: 30px 5%;
+    gap: 20px 16px;
+  }
+  .field-site-footer .field-wordmark {
+    width: 144px;
   }
   .field-site-footer > span {
     display: none;
