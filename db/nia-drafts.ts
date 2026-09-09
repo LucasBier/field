@@ -22,7 +22,7 @@ export class NiaDrafts {
     return (
       await this.db
         .prepare(
-          "SELECT * FROM nia_drafts WHERE phase IN ('queued','generating') OR id IN (SELECT id FROM nia_drafts ORDER BY created_at DESC LIMIT 40) ORDER BY created_at DESC",
+          "SELECT * FROM nia_drafts WHERE phase IN ('queued','generating') OR id IN (SELECT id FROM nia_drafts ORDER BY created_at DESC LIMIT 40) OR id IN (SELECT id FROM nia_drafts WHERE phase='published' ORDER BY updated_at DESC LIMIT 12) ORDER BY created_at DESC",
         )
         .all<NiaDraft>()
     ).results;

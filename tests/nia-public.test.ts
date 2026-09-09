@@ -322,6 +322,30 @@ await test('a factually grounded announcement still needs to pass the editorial 
   assert.equal(JSON.parse(messages[1].content).published[0].text, prior);
 });
 
+await test('publication history survives a long run of skipped drafts', async () => {
+  const s = store();
+  const row = await drafted(s);
+  await s.service.publish(
+    row.id,
+    row.revision,
+    candidate.text,
+    async () => '123',
+  );
+  s.sql.prepare('UPDATE nia_drafts SET created_at=1 WHERE id=?').run(row.id);
+  for (let i = 0; i < 45; i++) {
+    const { id } = await s.service.queue(brief);
+    const job = await s.service.claim(id, 0);
+    await s.service.complete(id, job!.revision, {
+      ...candidate,
+      decision: 'skip',
+      text: '',
+    });
+  }
+  assert.equal(
+    (await s.service.list()).filter((d) => d.phase === 'published')[0].id,
+    row.id,
+  );
+});
 await test('portrait publishing is bound to the reviewed immutable attachment', async () => {
   const s = store();
   assert.throws(() =>
