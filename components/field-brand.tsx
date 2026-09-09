@@ -5,7 +5,7 @@ export function FieldBrand({ priority = false }: { priority?: boolean }) {
   return (
     <Link href="/" className="field-wordmark" aria-label="Field home">
       <Image
-        src="/brand/field-primary-v1.png"
+        src="/brand/field-wordmark-v2.png"
         alt="Field"
         width={2172}
         height={724}
