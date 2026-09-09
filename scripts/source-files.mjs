@@ -7,6 +7,7 @@ export function sourceFiles(root) {
   const entries = [];
   function visit(path) {
     if (path === 'public/downloads') return;
+    if (path.startsWith('deploy/') && path.endsWith('.local.json')) return;
     const stat = lstatSync(join(root, path));
     if (stat.isSymbolicLink()) return;
     if (stat.isDirectory()) {
@@ -28,11 +29,15 @@ export function sourceFiles(root) {
     'scripts',
     'tests',
     'docs',
+    'deploy',
     'package.json',
     'package-lock.json',
     'tsconfig.json',
     'next.config.ts',
     'vite.config.ts',
+    'vite.vercel.config.ts',
+    'vercel.json',
+    '.vercelignore',
     'drizzle.config.ts',
     'wrangler.local.json',
     'README.md',

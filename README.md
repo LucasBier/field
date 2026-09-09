@@ -1,5 +1,7 @@
 # Field
 
+[ourfield.live](https://ourfield.live) · [Production deployment](docs/deployment.md)
+
 **She remembers you. You still get to change.**
 
 Field is a persistent companion runtime with a spatial interface. Nia carries a saved identity, memories, relationships and unfinished plans across conversations and model changes. Her understanding stays open to correction: revise a memory, review related plans, and continue from the updated context.
