@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { NIA } from './companion-character';
+import { NIA_MODEL, loadCompanionModel } from './companion-model';
 
 export type CompanionPose = 'idle' | 'walk' | 'think' | 'wave';
 
@@ -604,7 +605,7 @@ export function createCompanion() {
   };
 }
 
-// Preserve the scene's asynchronous resource interface without a model download.
-export function loadCompanion() {
+export function loadCompanion(signal?: AbortSignal) {
+  if (NIA_MODEL) return loadCompanionModel(NIA_MODEL, signal);
   return Promise.resolve(createCompanion());
 }

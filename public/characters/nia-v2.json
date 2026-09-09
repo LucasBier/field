@@ -1,0 +1,9 @@
+{
+  "id": "nia",
+  "version": "2.0.0",
+  "file": "nia-v2.glb",
+  "sha256": "9a98805962f0d5ffaab587da54566cff5bae2ddfa5f229d44ec9d46932b6ff5b",
+  "bytes": 5485268,
+  "heightMeters": 1.68,
+  "animations": ["Idle", "Walk", "Wave"]
+}

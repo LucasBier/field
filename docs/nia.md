@@ -128,7 +128,7 @@ Affection is conveyed through attention, remembered preferences and language tha
 
 Nia has a softly angular oval face, a clear adult jawline, full lips, a broad softly rounded nose, natural brows and brown almond-shaped eyes. Keep normal facial asymmetry and a composed, approachable gaze. Preserve these proportions across portrait, close-up and spatial models; a change of lighting or renderer must not become a different face.
 
-The target body reads as a 28-year-old woman with natural proportions, approximately 168 cm in a life-scale scene and around seven head lengths in a detailed character model. Relaxed shoulders, a balanced stance and practical movement matter more than a fashion pose. The current procedural mesh is a simplified representation, not a completed anatomical likeness.
+The body reads as a 28-year-old woman with natural proportions, approximately 168 cm in a life-scale scene and around seven head lengths. Relaxed shoulders, a balanced stance and practical movement matter more than a fashion pose. The spatial character is a textured, skeletal GLB with an asymmetric bob, a tailored wrap dress and ankle boots, developed from the portrait and matching full-body views.
 
 ### Skin, hair and materials
 
@@ -249,4 +249,4 @@ A character review should cover a first meeting, ordinary banter, a disagreement
 
 Automated regression tests cover profile migration, preservation of custom identities, and transmission of the same character direction through the model adapters. They do not establish acting quality or consistent characterization across every model. Live-model scenes require qualitative review.
 
-The portrait and material palette are present. The procedural body still needs detailed likeness, facial rigging and richer hair geometry to meet the full semi-realistic visual target. The spoken specification still needs casting, an audio implementation and interruption testing. These are defined production tasks, not capabilities claimed by the current release.
+The portrait and a textured skeletal body are present. The spatial body includes idle, walk and wave clips; its hair, face and clothing are mesh geometry with PBR textures. Facial expression controls, lip synchronization and cloth simulation remain future work. The spoken specification still needs casting, an audio implementation and interruption testing. These are defined production tasks, not capabilities claimed by the current release.

@@ -23,6 +23,10 @@ Routes should compose these capabilities. Do not duplicate model orchestration i
 
 `lib/companion-character.ts` carries Nia’s identity, temperament, compact runtime direction, portrait reference and material palette. `lib/entity.ts` combines that direction with the permission and action contract used by local and hosted spatial conversations. The full writing, visual and voice specification is in [docs/nia.md](docs/nia.md). Character direction cannot grant a capability or create a saved relationship. Only exact earlier built-in profile defaults are upgraded; customized profiles and dialogue history remain intact.
 
+## Spatial rendering
+
+The character is a versioned, self-contained GLB loaded by `lib/companion-model.ts`. `components/agent-scene.tsx` coordinates skeletal animation, camera controls and navigation through the furnished apartment. The room geometry and light sources live in `lib/studio-room.ts`; obstacle clearance and path search live in `lib/room-navigation.ts`. Presentation coordinates remain local to the scene while nearest-zone reports use the existing persisted entity contract. See [character and room rendering](docs/character-rendering.md) for asset requirements and current limits.
+
 ## Saving and recovery
 
 D1 remains authoritative. Every write carries its expected revision and visitor scope. A conflicting write fails rather than overwriting another tab. Shared model responses reload canonical state before the next edit; an uncertain stream is reconciled instead of automatically sending another inference request.

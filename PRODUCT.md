@@ -31,7 +31,7 @@ Read the **[full Nia character specification](docs/nia.md)** for her origin, mot
 
 `/` introduces Nia and the product's direction. `/space` provides text conversation, a spatial body, named locations, notes, plans, memory, relationships and runtime inspection. `/docs` explains the runnable setup. `/lab` provides optional deterministic experiments with evidence snapshots and branches.
 
-Local inference, hosted-provider adapters, server-managed streaming, anonymous isolation, transactional quotas and correction-aware context are implemented. Public serving requires operator configuration and deployment validation. The current procedural body is a simplified representation of the visual specification; voice is not yet connected.
+Local inference, hosted-provider adapters, server-managed streaming, anonymous isolation, transactional quotas and correction-aware context are implemented. Public serving requires operator configuration and deployment validation. Nia has a textured, skeletal body with idle, walking and greeting motions in a furnished, navigable room. Facial animation and voice are not yet connected.
 
 The owner-only `/admin/social` surface connects Nia's X account and manages public briefs, event opinions and reply drafts. A local model worker prepares candidates independently of visitor memory. Original posts require review of their exact text and optional catalog portrait; replies remain drafts. The local writer cannot publish. An owner-authorized external editor can schedule original posts, with a six-post daily cap and no automatic publication retries. See [public studio](docs/nia-studio.md) and [X connection](docs/x-connection.md).
 
