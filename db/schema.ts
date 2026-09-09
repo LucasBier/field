@@ -26,3 +26,24 @@ export const hostedTurns = sqliteTable(
     index('idx_hosted_turns_status_expiry').on(t.status, t.expiresAt),
   ],
 );
+
+export const xOauthStates = sqliteTable(
+  'x_oauth_states',
+  {
+    id: text('id').primaryKey(),
+    browserHash: text('browser_hash').notNull(),
+    verifier: text('verifier').notNull(),
+    expiresAt: integer('expires_at').notNull(),
+  },
+  (t) => [index('idx_x_oauth_expiry').on(t.expiresAt)],
+);
+export const xConnections = sqliteTable('x_connections', {
+  userId: text('user_id').primaryKey(),
+  username: text('username').notNull(),
+  name: text('name').notNull(),
+  tokens: text('tokens').notNull(),
+  expiresAt: integer('expires_at').notNull(),
+  revision: integer('revision').notNull(),
+  leaseUntil: integer('lease_until').notNull().default(0),
+  updatedAt: integer('updated_at').notNull(),
+});

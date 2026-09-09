@@ -15,6 +15,13 @@
       "when": 1788915718907,
       "tag": "0001_volatile_bloodstorm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788928683551,
+      "tag": "0002_x_connection",
+      "breakpoints": true
     }
   ]
 }

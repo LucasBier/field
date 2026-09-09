@@ -33,6 +33,8 @@ Read the **[full Nia character specification](docs/nia.md)** for her origin, mot
 
 Local inference, hosted-provider adapters, server-managed streaming, anonymous isolation, transactional quotas and correction-aware context are implemented. Public serving requires operator configuration and deployment validation. The current procedural body is a simplified representation of the visual specification; voice is not yet connected.
 
+The owner-only `/admin/social` surface connects and verifies Nia's X account. OAuth credentials are encrypted separately from visitor workspaces. It does not publish posts or enable background activity. See [X connection](docs/x-connection.md).
+
 ## Development priorities
 
 1. Evaluate Nia's characterization across ordinary conversation, disagreement, affection and memory correction.
