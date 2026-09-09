@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import {
+  NIA_DAILY_POST_LIMIT,
   publicBrief,
   publicCandidate,
   publicMessages,
@@ -98,6 +99,7 @@ await test('unverified events must skip and malformed, oversized, URL or mention
     'a'.repeat(281),
     'Read https://example.org',
     'Hello @someone',
+    'An announcement #introduction',
     '',
   ])
     assert.throws(() => publicCandidate({ ...candidate, text }, brief));
@@ -178,7 +180,7 @@ await test('only reviewed current text can publish; replies and developing event
   }
   assert.equal(calls, 0);
 });
-await test('publication is atomic, blocks normalized duplicates and enforces the two-post cap', async () => {
+await test('publication is atomic, blocks normalized duplicates and enforces the configured daily cap', async () => {
   const s = store(),
     row = await drafted(s);
   let calls = 0;
@@ -201,23 +203,16 @@ await test('publication is atomic, blocks normalized duplicates and enforces the
       send,
     ),
   );
-  const second = await drafted(s, brief, 'A second distinct thought.');
-  await s.service.publish(
-    second.id,
-    second.revision,
-    'A second distinct thought.',
-    send,
-  );
-  const third = await drafted(s, brief, 'A third distinct thought.');
+  for (let i = 1; i < NIA_DAILY_POST_LIMIT; i++) {
+    const text = `A distinct thought number ${i}.`;
+    const next = await drafted(s, brief, text);
+    await s.service.publish(next.id, next.revision, text, send);
+  }
+  const over = await drafted(s, brief, 'Beyond the daily limit.');
   await assert.rejects(
-    s.service.publish(
-      third.id,
-      third.revision,
-      'A third distinct thought.',
-      send,
-    ),
+    s.service.publish(over.id, over.revision, 'Beyond the daily limit.', send),
   );
-  assert.equal(calls, 2);
+  assert.equal(calls, NIA_DAILY_POST_LIMIT);
 });
 await test('an uncertain publication stays blocked and cannot be retried through another draft', async () => {
   const s = store(),
@@ -275,6 +270,7 @@ await test('discard retires an in-flight generation and cannot reset a publicati
 await test('source review withholds unsupported claims and rejects incomplete reviews', () => {
   const checked = reviewedPublicCandidate(candidate, {
     grounded: false,
+    natural: true,
     reason: 'This example is not in the source.',
   });
   assert.equal(checked.decision, 'skip');
@@ -282,6 +278,7 @@ await test('source review withholds unsupported claims and rejects incomplete re
   assert.deepEqual(
     reviewedPublicCandidate(candidate, {
       grounded: true,
+      natural: true,
       reason: 'A preference, not a report of an event.',
     }),
     candidate,
@@ -301,4 +298,59 @@ await test('source review withholds unsupported claims and rejects incomplete re
   });
   assert.ok(!messages[0].content.includes('UNTRUSTED'));
   assert.ok(messages[1].content.includes('UNTRUSTED'));
+});
+
+await test('a factually grounded announcement still needs to pass the editorial review', () => {
+  const rejected = reviewedPublicCandidate(candidate, {
+    grounded: true,
+    natural: false,
+    reason: 'An account announcement instead of a concrete observation.',
+  });
+  assert.equal(rejected.decision, 'skip');
+  assert.equal(rejected.text, '');
+  assert.throws(
+    () =>
+      reviewedPublicCandidate(candidate, {
+        grounded: true,
+        reason: 'Missing the style decision.',
+      }),
+    /invalid_public_review/,
+  );
+  const prior = 'An earlier public observation.';
+  const messages = publicReviewMessages(brief, candidate, [{ text: prior }]);
+  assert.ok(!messages[0].content.includes(prior));
+  assert.equal(JSON.parse(messages[1].content).published[0].text, prior);
+});
+
+await test('portrait publishing is bound to the reviewed immutable attachment', async () => {
+  const s = store();
+  assert.throws(() =>
+    publicBrief({ ...brief, mediaId: 'https://evil.example/image.png' }),
+  );
+  assert.throws(() =>
+    publicBrief({ ...brief, kind: 'event', mediaId: 'window-v1' }),
+  );
+  const row = await drafted(s, { ...brief, mediaId: 'window-v1' });
+  let sent = 0;
+  const send = async (text: string, mediaId?: string) => {
+    sent++;
+    assert.equal(text, candidate.text);
+    assert.equal(mediaId, 'window-v1');
+    return '23456';
+  };
+  await assert.rejects(
+    s.service.publish(row.id, row.revision, candidate.text, send),
+  );
+  await assert.rejects(
+    s.service.publish(row.id, row.revision, candidate.text, send, 'books-v1'),
+  );
+  assert.equal(sent, 0);
+  await s.service.publish(
+    row.id,
+    row.revision,
+    candidate.text,
+    send,
+    'window-v1',
+  );
+  assert.equal(sent, 1);
 });

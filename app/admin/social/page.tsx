@@ -35,7 +35,7 @@ export default function SocialConnection() {
       }
       setResult(
         data.user
-          ? `${data.verified ? 'Verified' : 'Connected'} as @${data.user.username}. Automatic posting is off.`
+          ? `${data.verified ? 'Verified' : 'Connected'} as @${data.user.username}.`
           : 'No X account connected.',
       );
     } catch {

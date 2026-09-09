@@ -3,6 +3,7 @@ import { NiaDrafts } from '@/db/nia-drafts';
 import { XConnection } from '@/db/x-connection';
 import { XClient, XError, xConfig, equalSecret } from '@/lib/x-auth';
 import { X_HEADERS } from '../x/route';
+import { loadNiaImage } from '@/lib/nia-media-server';
 export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
@@ -61,8 +62,23 @@ export async function POST(request: Request) {
     else if (v.action === 'publish') {
       if (v.reviewed !== true) throw new XError('review_required', 409);
       const token = await new XConnection(env.DB, c).accessToken();
-      result = await service.publish(v.id, v.revision, v.text, (text) =>
-        new XClient(c).post(token, text),
+      result = await service.publish(
+        v.id,
+        v.revision,
+        v.text,
+        async (text, mediaId) => {
+          const client = new XClient(c);
+          const media = mediaId
+            ? [
+                await client.uploadImage(
+                  token,
+                  await loadNiaImage(c.origin, mediaId),
+                ),
+              ]
+            : [];
+          return client.post(token, text, media);
+        },
+        v.mediaId || '',
       );
     } else throw new XError('invalid_request');
     return Response.json(result, { headers: X_HEADERS });

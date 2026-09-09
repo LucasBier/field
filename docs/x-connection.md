@@ -50,5 +50,5 @@ only accepts an authorization initiated by the owner in the same browser.
 Requested scopes are `tweet.read users.read tweet.write media.write offline.access`.
 Having write permission does not enable autonomous publication. The public studio
 uses a reviewed outbox, atomic publication claims, exact duplicate protection and
-a two-post daily limit. Its local worker can draft but cannot authorize publication. Private visitor conversations must never become
+a six-post UTC daily limit. Its local worker can draft but cannot authorize publication. Private visitor conversations must never become
 material for Nia's public account. X API credits do not pay for model inference.

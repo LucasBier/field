@@ -1,11 +1,14 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import type { NiaDraft } from '@/db/nia-drafts';
 import {
+  NIA_DAILY_POST_LIMIT,
   postWeight,
   type PublicBrief,
   type PublicCandidate,
 } from '@/lib/nia-public';
+import { NIA_MEDIA, niaMedia } from '@/lib/nia-media';
 const fieldStyle = {
   display: 'block',
   width: '100%',
@@ -21,6 +24,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
     [source, setSource] = useState(''),
     [url, setUrl] = useState(''),
     [replyTo, setReplyTo] = useState(''),
+    [mediaId, setMediaId] = useState(''),
     [certainty, setCertainty] =
       useState<PublicBrief['source']['certainty']>('developing'),
     [rows, setRows] = useState<NiaDraft[]>([]),
@@ -93,6 +97,40 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
         <option value="event">View on an event</option>
         <option value="reply">Reply draft</option>
       </select>
+      {kind === 'thought' && (
+        <>
+          <label htmlFor="nia-photo">Portrait</label>
+          <select
+            id="nia-photo"
+            value={mediaId}
+            onChange={(e) => setMediaId(e.target.value)}
+            style={fieldStyle}
+          >
+            <option value="">Text only</option>
+            {NIA_MEDIA.map((asset) => (
+              <option key={asset.id} value={asset.id}>
+                {asset.title}
+              </option>
+            ))}
+          </select>
+          {niaMedia(mediaId) && (
+            <Image
+              unoptimized
+              src={niaMedia(mediaId)!.path}
+              alt={niaMedia(mediaId)!.description}
+              width={224}
+              height={280}
+              style={{ borderRadius: 12, objectFit: 'cover', marginBottom: 16 }}
+            />
+          )}
+          {mediaId && (
+            <p>
+              A fictional portrait of Nia. Describe the image without inventing
+              a real outing.
+            </p>
+          )}
+        </>
+      )}
       <label htmlFor="nia-topic">Topic</label>
       <input
         id="nia-topic"
@@ -168,6 +206,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
                 topic,
                 source: { visibility: 'public', text: source, url, certainty },
                 replyTo: kind === 'reply' ? replyTo : '',
+                ...(kind === 'thought' && mediaId ? { mediaId } : {}),
               },
             })
           }
@@ -193,7 +232,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
       <p style={{ color: '#665d75' }}>
         Only public material belongs here. Links are references; their contents
         are not fetched automatically. Publishing requires your review and is
-        limited to two original posts per UTC day.
+        limited to {NIA_DAILY_POST_LIMIT} original posts per UTC day.
       </p>
       {rows
         .filter((row) => row.phase !== 'discarded')
@@ -218,6 +257,21 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
                 {brief.kind} · {row.phase}
               </p>
               <h3 style={{ fontSize: 20 }}>{brief.topic}</h3>
+              {niaMedia(brief.mediaId) && (
+                <figure style={{ margin: '16px 0' }}>
+                  <Image
+                    unoptimized
+                    src={niaMedia(brief.mediaId)!.path}
+                    alt={niaMedia(brief.mediaId)!.description}
+                    width={224}
+                    height={280}
+                    style={{ borderRadius: 12, objectFit: 'cover' }}
+                  />
+                  <figcaption>
+                    {niaMedia(brief.mediaId)!.title} · Fictional portrait
+                  </figcaption>
+                </figure>
+              )}
               {brief.source.url && (
                 <a
                   href={brief.source.url}
@@ -307,7 +361,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
                             })
                           }
                         />{' '}
-                        I reviewed the facts and this exact text.
+                        I reviewed the facts, exact text and attached portrait.
                       </label>
                       <button
                         className="field-btn field-btn-primary"
@@ -326,6 +380,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
                             revision: row.revision,
                             text,
                             reviewed: true,
+                            mediaId: brief.mediaId || '',
                           })
                         }
                       >

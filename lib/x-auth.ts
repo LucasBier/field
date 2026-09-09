@@ -203,14 +203,48 @@ export class XClient {
   refresh(token: string) {
     return this.tokens({ grant_type: 'refresh_token', refresh_token: token });
   }
-  async post(token: string, text: string) {
+  async uploadImage(token: string, image: Blob) {
+    if (image.type !== 'image/png' || !image.size || image.size > 5_000_000)
+      throw new XError('invalid_media');
+    const body = new FormData();
+    body.set('media', image, 'nia.png');
+    body.set('media_category', 'tweet_image');
+    body.set('media_type', 'image/png');
+    const r = await this.transport('https://api.x.com/2/media/upload', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
+      body,
+      redirect: 'error',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!r.ok) throw new XError('x_media_unavailable', 502);
+    const v = (await r.json()) as {
+      data?: { id?: string; processing_info?: { state?: string } };
+      errors?: unknown[];
+    };
+    if (
+      !v.data?.id ||
+      !/^\d{1,25}$/.test(v.data.id) ||
+      v.errors?.length ||
+      (v.data.processing_info && v.data.processing_info.state !== 'succeeded')
+    )
+      throw new XError('x_media_unavailable', 502);
+    return v.data.id;
+  }
+  async post(token: string, text: string, mediaIds: string[] = []) {
+    if (mediaIds.length > 4 || mediaIds.some((id) => !/^\d{1,25}$/.test(id)))
+      throw new XError('invalid_media');
     const r = await this.transport('https://api.x.com/2/tweets', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({
+        text,
+        ...(mediaIds.length ? { media: { media_ids: mediaIds } } : {}),
+      }),
       redirect: 'error',
       cache: 'no-store',
       signal: AbortSignal.timeout(15000),

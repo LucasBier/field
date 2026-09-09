@@ -114,7 +114,7 @@ do {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               model: 'qwen3.5:9b',
-              messages: publicReviewMessages(brief, candidate),
+              messages: publicReviewMessages(brief, candidate, published),
               format: PUBLIC_REVIEW_SCHEMA,
               think: false,
               stream: false,

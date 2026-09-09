@@ -33,7 +33,7 @@ Read the **[full Nia character specification](docs/nia.md)** for her origin, mot
 
 Local inference, hosted-provider adapters, server-managed streaming, anonymous isolation, transactional quotas and correction-aware context are implemented. Public serving requires operator configuration and deployment validation. The current procedural body is a simplified representation of the visual specification; voice is not yet connected.
 
-The owner-only `/admin/social` surface connects Nia's X account and manages public briefs, event opinions and reply drafts. A local model worker prepares candidates independently of visitor memory. Original posts require review of their exact text; replies remain drafts. No unattended publication or automatic replies are enabled. See [public studio](docs/nia-studio.md) and [X connection](docs/x-connection.md).
+The owner-only `/admin/social` surface connects Nia's X account and manages public briefs, event opinions and reply drafts. A local model worker prepares candidates independently of visitor memory. Original posts require review of their exact text and optional catalog portrait; replies remain drafts. The local writer cannot publish. An owner-authorized external editor can schedule original posts, with a six-post daily cap and no automatic publication retries. See [public studio](docs/nia-studio.md) and [X connection](docs/x-connection.md).
 
 ## Development priorities
 

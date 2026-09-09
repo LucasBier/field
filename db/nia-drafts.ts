@@ -1,4 +1,9 @@
-import { publicBrief, publicCandidate } from '../lib/nia-public';
+import {
+  NIA_DAILY_POST_LIMIT,
+  publicBrief,
+  publicCandidate,
+} from '../lib/nia-public';
+import type { NiaMediaId } from '../lib/nia-media';
 import { digest, XError } from '../lib/x-auth';
 export type NiaDraft = {
   id: string;
@@ -78,7 +83,11 @@ export class NiaDrafts {
     const row = await this.get(id);
     if (!row.candidate) throw new XError('no_draft', 409);
     const candidate = publicCandidate(
-      { ...JSON.parse(row.candidate), text },
+      {
+        ...JSON.parse(row.candidate),
+        text,
+        why: 'Edited after editorial review.',
+      },
       publicBrief(JSON.parse(row.brief)),
     );
     const r = await this.db
@@ -118,13 +127,16 @@ export class NiaDrafts {
     id: string,
     revision: number,
     approvedText: string,
-    send: (text: string) => Promise<string>,
+    send: (text: string, mediaId?: NiaMediaId) => Promise<string>,
+    approvedMediaId = '',
   ) {
     const row = await this.get(id),
       brief = publicBrief(JSON.parse(row.brief));
     if (brief.kind === 'reply') throw new XError('reply_is_draft_only', 409);
     if (brief.kind === 'event' && brief.source.certainty !== 'confirmed')
       throw new XError('source_needs_verification', 409);
+    if ((brief.mediaId || '') !== approvedMediaId)
+      throw new XError('review_changed', 409);
     const candidate = publicCandidate(
       JSON.parse(row.candidate || 'null'),
       brief,
@@ -135,14 +147,21 @@ export class NiaDrafts {
     // Claim, global exclusion, duplicate prevention and daily cap are one atomic write.
     const lock = await this.db
       .prepare(
-        "UPDATE nia_drafts SET phase='publishing',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='draft' AND NOT EXISTS (SELECT 1 FROM nia_drafts WHERE phase IN ('publishing','uncertain')) AND NOT EXISTS (SELECT 1 FROM nia_drafts WHERE fingerprint=? AND phase='published') AND (SELECT COUNT(*) FROM nia_drafts WHERE phase='published' AND updated_at>=?)<2",
+        "UPDATE nia_drafts SET phase='publishing',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='draft' AND NOT EXISTS (SELECT 1 FROM nia_drafts WHERE phase IN ('publishing','uncertain')) AND NOT EXISTS (SELECT 1 FROM nia_drafts WHERE fingerprint=? AND phase='published') AND (SELECT COUNT(*) FROM nia_drafts WHERE phase='published' AND updated_at>=?)<?",
       )
-      .bind(Date.now(), id, revision, row.fingerprint, day)
+      .bind(
+        Date.now(),
+        id,
+        revision,
+        row.fingerprint,
+        day,
+        NIA_DAILY_POST_LIMIT,
+      )
       .run();
     if (!lock.meta.changes)
       throw new XError('publish_blocked_check_status_or_limit', 409);
     try {
-      const postId = await send(candidate.text);
+      const postId = await send(candidate.text, brief.mediaId);
       const r = await this.db
         .prepare(
           "UPDATE nia_drafts SET phase='published',post_id=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='publishing'",
