@@ -19,6 +19,10 @@ Field is a local-first development project with a server-authoritative workspace
 
 Routes should compose these capabilities. Do not duplicate model orchestration in presentation components or let a provider write directly to storage. Domain functions return new state; rejected actions must not partially apply.
 
+## Character definition
+
+`lib/companion-character.ts` carries Nia’s identity, temperament, compact runtime direction, portrait reference and material palette. `lib/entity.ts` combines that direction with the permission and action contract used by local and hosted spatial conversations. The full writing, visual and voice specification is in [docs/nia.md](docs/nia.md). Character direction cannot grant a capability or create a saved relationship. Only exact earlier built-in profile defaults are upgraded; customized profiles and dialogue history remain intact.
+
 ## Saving and recovery
 
 D1 remains authoritative. Every write carries its expected revision and visitor scope. A conflicting write fails rather than overwriting another tab. Shared model responses reload canonical state before the next edit; an uncertain stream is reconciled instead of automatically sending another inference request.

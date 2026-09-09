@@ -1,5 +1,6 @@
 import type { Entity } from './entity-schema';
 import type { AgentRun } from './runtime-schema';
+import { NIA } from './companion-character';
 export type Kind = 'pendulum' | 'spring';
 export type Parameters = {
   length: number;
@@ -65,8 +66,9 @@ export const DEFAULT_PARAMS: Parameters = {
 export const COLORS = ['#baa8ff', '#83e3c7', '#ffbc87', '#8fcaff', '#f3a5c8'];
 export const uid = () => crypto.randomUUID();
 export const stamp = () => new Date().toISOString();
-export const COMPANION_PURPOSE =
+export const PREVIOUS_COMPANION_PURPOSE =
   'Be a warm, thoughtful female AI companion. Share everyday conversations, remember what matters, and make plans together. Be affectionate at my pace, with your own point of view.';
+export const COMPANION_PURPOSE = NIA.purpose;
 export const LEGACY_PURPOSE =
   'Build tangible experiments. Keep evidence. Stay curious.';
 export function createExperiment(
@@ -95,7 +97,7 @@ export function initialWorkspace(): Workspace {
   };
   return {
     profile: {
-      name: 'Nia',
+      name: NIA.name,
       purpose: COMPANION_PURPOSE,
     },
     experiments: [first],
@@ -105,7 +107,7 @@ export function initialWorkspace(): Workspace {
       {
         id: 'welcome',
         role: 'assistant',
-        text: 'Hi, I’m Nia, your AI companion. Tell me about your day, or let’s make a little plan together. We can keep the things you want to remember here.',
+        text: NIA.welcome,
         createdAt: first.createdAt,
         mode: 'demo',
       },

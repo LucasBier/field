@@ -6,6 +6,12 @@ Field is a persistent companion runtime with a spatial interface. Nia carries a 
 
 The runtime separates durable state from model inference. Models propose replies and bounded actions; Field validates permissions, context versions and storage revisions before committing them.
 
+## Meet Nia
+
+Nia is a 28-year-old Black woman with an observant eye, dry humor and a habit of giving unfinished ideas a shape. She can be affectionate, have a point of view, and recognize when company matters more than a plan. Her character asks how to remember someone without deciding who they have to remain.
+
+Read [Nia’s character, visual and voice specification](docs/nia.md). Her identity and palette are shared by the model adapters and spatial body; spoken voice is a defined next step.
+
 ## Run locally
 
 Node.js 22.13 or newer is required.

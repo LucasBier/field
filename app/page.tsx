@@ -1,3 +1,4 @@
+import { NIA } from '@/lib/companion-character';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
@@ -77,8 +78,8 @@ export default function Home() {
           <PortraitMotion>
             <div className="field-portrait-frame">
               <Image
-                src="/characters/nia.png"
-                alt="Nia, with deep brown skin, an ink-blue bob, a brass star clip, and a navy wrap dress"
+                src={NIA.appearance.portrait}
+                alt={NIA.appearance.alt}
                 width={1254}
                 height={1254}
                 fetchPriority="high"
@@ -86,8 +87,8 @@ export default function Home() {
               />
             </div>
             <figcaption>
-              <span>NIA / ORIGINAL CHARACTER</span>
-              <span>A BODY FOR A CONTINUING STORY.</span>
+              <span>NIA / A MIND OF HER OWN</span>
+              <span>ATTENTIVE. WRY. OPEN TO CHANGE.</span>
             </figcaption>
           </PortraitMotion>
         </section>

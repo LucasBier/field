@@ -1,6 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 import Image from 'next/image';
+import { NIA } from '@/lib/companion-character';
 import {
   Check,
   Download,
@@ -540,15 +541,20 @@ export default function AgentPanels({
                 )}
                 <figure className="companion-portrait-card">
                   <Image
-                    src="/characters/nia.png"
+                    src={NIA.appearance.portrait}
                     width={1254}
                     height={1254}
-                    alt="Nia, an original Black female companion with deep brown skin and an ink-blue bob"
+                    alt={NIA.appearance.alt}
                     loading="lazy"
                     unoptimized
                   />
-                  <figcaption>Original portrait · Nia</figcaption>
+                  <figcaption>Nia · NEE-uh · she/her</figcaption>
                 </figure>
+                <p className="panel-help">{NIA.introduction}</p>
+                <p className="panel-help">
+                  A Black woman, character age 28. Warm, candid, and quietly
+                  funny.
+                </p>
                 <div className="identity-card">
                   <Fingerprint size={30} />
                   <div>

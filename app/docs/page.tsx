@@ -79,9 +79,9 @@ export default function Docs() {
               PowerShell blocks npm, use <code>npm.cmd</code> instead.
             </p>
             <p className="guide-note">
-              The source download contains application code and original
-              character assets. It excludes saved workspaces, model keys,
-              deployment credentials, and the hosted project binding.
+              The source download contains application code and Nia’s character
+              assets. It excludes saved workspaces, model keys, deployment
+              credentials, and the hosted project binding.
             </p>
             <h3>Try a first interaction.</h3>
             <CodeBlock
@@ -195,8 +195,8 @@ export default function Docs() {
             <p>
               In <code>lib/field.ts</code>, the profile inside{' '}
               <code>initialWorkspace()</code> supplies defaults for new
-              workspaces. Changing it does not overwrite an existing saved
-              profile.
+              workspaces. Exact earlier built-in personality text upgrades to
+              the current default; custom names and personalities remain yours.
             </p>
             <CodeBlock
               label="lib/field.ts · profile defaults"
@@ -205,9 +205,13 @@ export default function Docs() {
               }
             />
             <p>
-              Her companion behavior is defined by <code>ENTITY_SYSTEM</code> in{' '}
-              <code>lib/entity.ts</code>. Keep the response format and action
-              contract intact when editing its personality guidance.
+              Nia’s identity, temperament, portrait reference and palette live
+              in <code>lib/companion-character.ts</code>. Her complete
+              character, visual and voice specification is in{' '}
+              <code>docs/nia.md</code>. The runtime combines that definition
+              with the action contract in <code>lib/entity.ts</code>. Keep
+              permissions and response validation intact when changing her
+              manner.
             </p>
             <h3>Adjust the 3D appearance.</h3>
             <p>
@@ -216,15 +220,13 @@ export default function Docs() {
               her face, neck, ears, hands, and legs.
             </p>
             <CodeBlock
-              label="lib/companion-avatar.ts · skin materials"
-              code={
-                "const skin = material('#633b2c', 0.78);\nconst skinShadow = material('#40251d', 0.85);"
-              }
+              label="lib/companion-character.ts · skin palette"
+              code={"skin: '#633b2c',\nskinDetail: '#40251d',"}
             />
             <p>
               The portrait is a separate image at{' '}
-              <code>public/characters/nia.png</code>. Editing a mesh color does
-              not recolor the portrait.
+              <code>public/characters/nia-v1.png</code>. Editing a mesh color
+              does not recolor the portrait.
             </p>
             <div className="guide-file-list">
               <div>

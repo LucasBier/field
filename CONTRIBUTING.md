@@ -14,7 +14,7 @@ State transitions belong in the domain layer, provider protocols in adapters, an
 
 Schema changes require a generated and inspected migration. Never rewrite an applied migration. Persisted-state changes must preserve valid earlier workspaces and canonical exports or provide a compatible migration.
 
-Keep interface copy and public documentation in English. Use the established violet palette and original character assets. Interactive controls need accessible names, keyboard operation and appropriate reduced-motion behavior.
+Keep interface copy and public documentation in English. Use the established violet palette and follow [Nia’s character specification](docs/nia.md) for dialogue, appearance and performance. Interactive controls need accessible names, keyboard operation and appropriate reduced-motion behavior.
 
 ## Reports
 

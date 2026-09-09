@@ -1,11 +1,11 @@
 import * as THREE from 'three';
+import { NIA } from './companion-character';
 
 export type CompanionPose = 'idle' | 'walk' | 'think' | 'wave';
 
 type Ring = [height: number, width: number, depth: number];
 
-// Nia's mesh, articulated hierarchy, and motion curves are authored here.
-// No downloaded bodies, rigs, textures, or animation clips are used.
+// Articulated body and motion curves for the Nia character specification.
 function silhouette(rings: Ring[], segments = 48) {
   const positions: number[] = [];
   const indices: number[] = [];
@@ -84,27 +84,6 @@ function stroke(
   );
 }
 
-function starGeometry() {
-  const shape = new THREE.Shape();
-  for (let i = 0; i < 8; i++) {
-    const angle = (i / 8) * Math.PI * 2 + Math.PI / 2;
-    const radius = i % 2 === 0 ? 0.07 : 0.024;
-    const x = Math.cos(angle) * radius,
-      y = Math.sin(angle) * radius;
-    if (i === 0) shape.moveTo(x, y);
-    else shape.lineTo(x, y);
-  }
-  shape.closePath();
-  return new THREE.ExtrudeGeometry(shape, {
-    depth: 0.013,
-    bevelEnabled: true,
-    bevelSegments: 2,
-    steps: 1,
-    bevelSize: 0.004,
-    bevelThickness: 0.004,
-  });
-}
-
 export function disposeAvatar(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>();
   const surfaces = new Set<THREE.Material>();
@@ -121,29 +100,30 @@ export function disposeAvatar(root: THREE.Object3D) {
 
 export function createCompanion() {
   const body = new THREE.Group();
-  body.name = 'Nia-Original-Field-Character';
+  body.name = NIA.name;
   body.userData = {
-    design: 'field-nia-v2',
-    authoring: 'procedural-original',
-    importedAssets: [],
+    characterId: NIA.id,
+    characterVersion: NIA.version,
+    geometry: 'procedural',
   };
-  const skin = material('#633b2c', 0.78);
-  const skinShadow = material('#40251d', 0.85);
-  const lips = material('#a55253', 0.74);
+  const palette = NIA.appearance.palette;
+  const skin = material(palette.skin, 0.78);
+  const skinShadow = material(palette.skinDetail, 0.85);
+  const lips = material(palette.lips, 0.74);
   skin.name = 'Nia deep warm-brown skin';
   skinShadow.name = 'Nia skin detail';
   lips.name = 'Nia lips';
-  const navy = material('#192c4a', 0.84);
-  const sleeveSurface = material('#263d5d', 0.88);
-  const ivory = material('#e7e4d7', 0.92);
-  const hair = material('#142331', 0.56);
-  const hairRidge = material('#223745', 0.65);
-  const teal = material('#315c63', 0.68);
-  const brass = material('#cba86a', 0.34, 0.55);
-  const jade = material('#5c968b', 0.3, 0.12);
+  const navy = material(palette.dress, 0.84);
+  const sleeveSurface = material(palette.sleeve, 0.88);
+  const ivory = material(palette.collar, 0.92);
+  const hair = material(palette.hair, 0.56);
+  const hairRidge = material(palette.hairHighlight, 0.65);
+  const teal = material(palette.hairAccent, 0.68);
+  const brass = material(palette.brass, 0.34, 0.55);
+  const jade = material(palette.jade, 0.3, 0.12);
   const dark = material('#19222b', 0.78);
   const whites = material('#ece8de', 0.4);
-  const iris = material('#925e32', 0.38);
+  const iris = material(palette.eyes, 0.38);
   const glint = new THREE.MeshBasicMaterial({ color: '#fff9e9' });
 
   const pelvis = new THREE.Group();
@@ -462,7 +442,7 @@ export function createCompanion() {
   mouth.name = 'smile';
   oval(head, skin, [0, -0.2, 0.148], [0.065, 0.03, 0.025]);
 
-  // Original asymmetric bob: a crown surface and shaped side/back locks.
+  // Asymmetric bob: a crown surface and shaped side/back locks.
   const hairCrown = attach(
     head,
     new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, Math.PI * 0.55),
@@ -522,7 +502,16 @@ export function createCompanion() {
       hairRidge,
     );
   }
-  const pin = attach(head, starGeometry(), brass, 0.214, 0.172, 0.168);
+  const pin = attach(
+    head,
+    new THREE.CapsuleGeometry(0.012, 0.09, 4, 12),
+    brass,
+    0.214,
+    0.172,
+    0.168,
+  );
+  pin.name = 'brass-barrette';
+  pin.scale.z = 0.45;
   pin.rotation.y = 0.37;
   pin.rotation.z = -0.18;
 
