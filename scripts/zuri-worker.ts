@@ -8,23 +8,23 @@ import {
   PUBLIC_REVIEW_SCHEMA,
   publicReviewMessages,
   reviewedPublicCandidate,
-} from '../lib/nia-public';
-import type { NiaDraft } from '../db/nia-drafts';
+} from '../lib/zuri-public';
+import type { ZuriDraft } from '../db/zuri-drafts';
 const watch = process.argv.includes('--watch');
-const file = process.env.FIELD_NIA_CREDENTIAL_FILE;
+const file = process.env.FIELD_ZURI_CREDENTIAL_FILE;
 if (!file)
   throw new Error(
-    'Set FIELD_NIA_CREDENTIAL_FILE to the private worker configuration.',
+    'Set FIELD_ZURI_CREDENTIAL_FILE to the private worker configuration.',
   );
 const credentials = JSON.parse(await readFile(file, 'utf8')) as {
   FIELD_X_ORIGIN: string;
-  FIELD_NIA_WORKER_KEY: string;
+  FIELD_ZURI_WORKER_KEY: string;
 };
 const origin = credentials.FIELD_X_ORIGIN;
 if (
   new URL(origin).origin !== origin ||
   !origin.startsWith('https://') ||
-  !/^[a-f0-9]{64}$/.test(credentials.FIELD_NIA_WORKER_KEY)
+  !/^[a-f0-9]{64}$/.test(credentials.FIELD_ZURI_WORKER_KEY)
 )
   throw new Error('Invalid worker configuration.');
 async function api(body: Record<string, unknown>) {
@@ -32,7 +32,7 @@ async function api(body: Record<string, unknown>) {
     method: 'POST',
     headers: {
       Origin: origin,
-      Authorization: 'Bearer ' + credentials.FIELD_NIA_WORKER_KEY,
+      Authorization: 'Bearer ' + credentials.FIELD_ZURI_WORKER_KEY,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
@@ -41,8 +41,8 @@ async function api(body: Record<string, unknown>) {
   });
   const v = (await r.json()) as {
     error?: string;
-    drafts?: NiaDraft[];
-    job?: NiaDraft | null;
+    drafts?: ZuriDraft[];
+    job?: ZuriDraft | null;
   };
   if (!r.ok) throw new Error(v.error || 'Studio request failed.');
   return v;
@@ -55,7 +55,7 @@ process.on('SIGTERM', () => {
   stopped = true;
 });
 console.log(
-  'Nia local draft worker ready. It creates drafts; it cannot publish posts.',
+  'Zuri local draft worker ready. It creates drafts; it cannot publish posts.',
 );
 do {
   try {
@@ -143,7 +143,7 @@ do {
           );
         }
         // Retain the result privately before saving, so a lost response never forces a duplicate model run.
-        const path = process.env.FIELD_NIA_RECEIPTS;
+        const path = process.env.FIELD_ZURI_RECEIPTS;
         if (path) {
           await mkdir(dirname(path), { recursive: true });
           await writeFile(
@@ -170,7 +170,7 @@ do {
         console.log(
           candidate.decision === 'draft'
             ? 'Draft saved for review.'
-            : 'Nia chose not to post.',
+            : 'Zuri chose not to post.',
         );
       } catch {
         await api({ action: 'fail', id: job.id, revision: job.revision }).catch(

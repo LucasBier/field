@@ -83,12 +83,12 @@ export default function AgentConnectionDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="site-connection-card">
-          <strong>Talk with Nia</strong>
+          <strong>Talk with Zuri</strong>
           <p>
             {site?.provider === 'ollama'
               ? site.enabled
                 ? 'Running on this computer. Your conversations stay local, with no model key or per-message API fee.'
-                : 'The local model is offline. Start Ollama on this computer to talk with Nia.'
+                : 'The local model is offline. Start Ollama on this computer to talk with Zuri.'
               : site?.enabled
                 ? 'Provided by Field. No model key or installation needed. Your selected conversation context is sent to DeepSeek.'
                 : 'Shared conversations are not enabled on this installation yet. Room controls are available. Connect your model below to start talking.'}

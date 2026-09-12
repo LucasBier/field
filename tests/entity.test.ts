@@ -18,7 +18,8 @@ import {
 import { canonicalWorkspace, validWorkspace } from '../lib/validation';
 import { localRequest, runAgent, discoverLocalModels } from '../lib/inference';
 import { hostedMessages } from '../lib/hosted-provider';
-import { NIA_CHARACTER_SYSTEM } from '../lib/companion-character';
+import { newDesk, publicDesk } from '../lib/desk';
+import { ZURI_CHARACTER_SYSTEM } from '../lib/companion-character';
 
 await test('legacy workspaces gain an identity without losing history or experiments', () => {
   const old = initialWorkspace();
@@ -48,9 +49,9 @@ await test('companion upgrade preserves the existing identity and custom persona
   assert.equal(ensureEntity(w), w);
   assert.equal(w.profile.purpose, 'My own personality and shared story.');
 });
-await test('the Nia default upgrade preserves renamed profiles and every saved record', () => {
+await test('the Zuri default upgrade preserves renamed profiles and every saved record', () => {
   const w = ensureEntity(initialWorkspace());
-  w.profile = { name: 'My Nia', purpose: PREVIOUS_COMPANION_PURPOSE };
+  w.profile = { name: 'My Zuri', purpose: PREVIOUS_COMPANION_PURPOSE };
   w.memories.push({
     id: 'my-detail',
     text: 'I prefer quiet evenings.',
@@ -95,7 +96,7 @@ await test('model handoffs carry the character contract without promoting person
   const local = localRequest(w, 'Who are you?', 'test-model').messages;
   const shared = hostedMessages(w, 'Who are you?');
   for (const messages of [local, shared]) {
-    assert.ok(messages[0].content.includes(NIA_CHARACTER_SYSTEM));
+    assert.ok(messages[0].content.includes(ZURI_CHARACTER_SYSTEM));
     assert.ok(messages[0].content.includes(ENTITY_SYSTEM));
     assert.ok(!messages[0].content.includes('UNTRUSTED_'));
     const data = JSON.parse(messages[1].content);
@@ -109,7 +110,7 @@ await test('disconnected conversation has no scripted persona responses or acces
   const w = ensureEntity(initialWorkspace());
   assert.match(
     entityDemo('What do you remember about me?', w).reply,
-    /Connect Nia/,
+    /Connect Zuri/,
   );
   w.memories.push({
     id: 'day',
@@ -119,7 +120,7 @@ await test('disconnected conversation has no scripted persona responses or acces
   });
   const saved = JSON.stringify(w);
   const reply = entityDemo('What do you remember about me?', w);
-  assert.match(reply.reply, /Connect Nia/);
+  assert.match(reply.reply, /Connect Zuri/);
   assert.doesNotMatch(reply.reply, /I like slow mornings/);
   assert.deepEqual(reply.actions, []);
   assert.deepEqual(entityDemo('Can you be my partner?', w).actions, []);
@@ -227,6 +228,7 @@ await test('local adapter sends context only to loopback and validates replies',
   const w = ensureEntity(initialWorkspace());
   const calls: { url: string; body: unknown }[] = [];
   t.mock.method(globalThis, 'fetch', async (url: string, init: RequestInit) => {
+    if (url === '/api/desk') return Response.json(publicDesk(newDesk()));
     calls.push({
       url,
       body: typeof init?.body === 'string' ? JSON.parse(init.body) : null,
@@ -261,16 +263,18 @@ await test('local adapter sends context only to loopback and validates replies',
   assert.equal(answer.actions[0].type, 'move');
 });
 await test('local adapter rejects unsupported model output', async (t) => {
-  t.mock.method(globalThis, 'fetch', async () =>
-    Response.json({
-      done: true,
-      message: {
-        content: JSON.stringify({
-          reply: 'Running code',
-          actions: [{ type: 'run_code' }],
+  t.mock.method(globalThis, 'fetch', async (url: string) =>
+    url === '/api/desk'
+      ? Response.json(publicDesk(newDesk()))
+      : Response.json({
+          done: true,
+          message: {
+            content: JSON.stringify({
+              reply: 'Running code',
+              actions: [{ type: 'run_code' }],
+            }),
+          },
         }),
-      },
-    }),
   );
   await assert.rejects(
     () =>

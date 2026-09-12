@@ -14,13 +14,16 @@ import {
 import { baselineOf, formula, period, LIMITS } from '@/lib/field';
 import { currentMessages, retrieveMemories } from '@/lib/memory';
 import { getVisitor } from '@/db/visitor';
+import { deskStore } from '@/db/desk';
+import { deskContext } from '@/lib/desk-context';
 const json = (body: unknown, status = 200) =>
   Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
 export async function POST(request: Request) {
   if (!sameOrigin(request))
     return json({ error: 'This request must come from your workspace.' }, 403);
   try {
-    if (!(await getVisitor(request)))
+    const visitor = await getVisitor(request);
+    if (!visitor)
       return json({ error: 'Open your space before connecting a model.' }, 401);
     const body = (await readBoundedJson(request, 1_000_000)) as Record<
       string,
@@ -51,7 +54,12 @@ export async function POST(request: Request) {
     if (space && !w.entity)
       return json({ error: 'Agent identity is still loading.' }, 400);
     const context = space
-      ? entityContext(w, body.message)
+      ? {
+          ...entityContext(w, body.message),
+          desk: deskContext(
+            (await deskStore().read(visitor.workspaceId)).state,
+          ),
+        }
       : {
           identity: w.profile,
           selected,

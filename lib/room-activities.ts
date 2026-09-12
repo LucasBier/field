@@ -104,7 +104,7 @@ export class RoomActivityController {
         ? ROOM_ACTIVITIES[intent.activity].approach
         : intent.destination;
     if (!canStand(destination)) return false;
-    // Validate before interrupting a seated activity; an invalid floor tap never moves Nia.
+    // Validate before interrupting a seated activity; an invalid floor tap never moves Zuri.
     const from =
       this.activity && this.phase !== 'walking'
         ? ROOM_ACTIVITIES[this.activity].approach

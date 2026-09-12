@@ -1,7 +1,7 @@
-# Nia's X connection
+# Zuri's X connection
 
 Field connects one operator-owned X account using OAuth 2.0 Authorization Code with
-PKCE (S256). Website visitors cannot connect or replace Nia's account. This module
+PKCE (S256). Website visitors cannot connect or replace Zuri's account. This module
 connects and verifies the account; publication is handled separately by the reviewed public studio, not by account connection.
 
 ## Configuration
@@ -51,4 +51,4 @@ Requested scopes are `tweet.read users.read tweet.write media.write offline.acce
 Having write permission does not enable autonomous publication. The public studio
 uses a reviewed outbox, atomic publication claims, exact duplicate protection and
 a six-post UTC daily limit. Its local worker can draft but cannot authorize publication. Private visitor conversations must never become
-material for Nia's public account. X API credits do not pay for model inference.
+material for Zuri's public account. X API credits do not pay for model inference.

@@ -21,7 +21,7 @@ Routes should compose these capabilities. Do not duplicate model orchestration i
 
 ## Character definition
 
-`lib/companion-character.ts` carries Nia’s identity, temperament, compact runtime direction, portrait reference and material palette. `lib/entity.ts` combines that direction with the permission and action contract used by local and hosted spatial conversations. The full writing, visual and voice specification is in [docs/nia.md](docs/nia.md). Character direction cannot grant a capability or create a saved relationship. Only exact earlier built-in profile defaults are upgraded; customized profiles and dialogue history remain intact.
+`lib/companion-character.ts` carries Zuri’s identity, temperament, compact runtime direction, portrait reference and material palette. `lib/entity.ts` combines that direction with the permission and action contract used by local and hosted spatial conversations. The full writing, visual and voice specification is in [docs/zuri.md](docs/zuri.md). Character direction cannot grant a capability or create a saved relationship. Only exact earlier built-in profile defaults are upgraded; customized profiles and dialogue history remain intact.
 
 ## Spatial rendering
 
@@ -57,5 +57,8 @@ GitHub Actions is configured to run the same check on pushes and pull requests, 
 - Ollama through the shared service runs only in development. Public deployment needs an independently reachable inference service.
 - No automatic production backups, restored-backup acceptance test, edge abuse controls or operational monitoring are delivered by the check workflow.
 - Applied database migrations are immutable. Add reviewed migrations for future schema changes.
+# Desk subsystem
 
-`lib/room-activities.ts` coordinates navigation and furniture transitions. `lib/companion-interaction.ts` layers two-bone contact and book/keyboard interaction over the imported motion clips. Its session state is separate from persisted workspace actions. `app/styles/room-layout.css` reserves canvas space independently of controls and conversation.
+The desk ledger is independent of conversation revisions. `lib/desk.ts` defines bounded transitions, `db/desk-store.ts` serializes them with revision compare-and-swap, and visitor-scoped routes expose redacted state. A physical bridge receives an at-most-once lease; unknown physical outcomes are never replayed. The device adapter in `lib/desk-controller.ts` queues one local controller step at a time and journals before dispatch through `scripts/desk-bridge.ts`.
+
+Camera evidence is immutable private object storage referenced from D1 events. The bridge cannot mark a physical task successful: a fresh image and owner review are required. Model prompts receive only three recent task summaries, including execution mode and verification source. Browser interpolation never determines success. Connection, recovery, media quotas and deployment bindings are documented in `docs/desk.md`.

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { CompanionPose } from './companion-avatar';
-import { NIA } from './companion-character';
+import { ZURI } from './companion-character';
 import {
   createCompanionInteraction,
   type CompanionInteraction,
@@ -13,8 +13,8 @@ export type CompanionModelSpec = {
   clips: Partial<Record<CompanionPose, string>>;
 };
 
-export const NIA_MODEL: CompanionModelSpec = {
-  src: '/characters/nia-v2.glb',
+export const ZURI_MODEL: CompanionModelSpec = {
+  src: '/characters/zuri-v2.glb',
   height: 1.68,
   facing: 0,
   clips: {
@@ -88,10 +88,10 @@ export function createModelCompanion(
   // Keep the imported root transforms intact: animation tracks may address them.
   body.scale.setScalar(scale);
   orientation.position.set(-center.x, -bounds.min.y, -center.z);
-  body.name = NIA.name;
+  body.name = ZURI.name;
   body.userData = {
-    characterId: NIA.id,
-    characterVersion: NIA.version,
+    characterId: ZURI.id,
+    characterVersion: ZURI.version,
     geometry: 'glb',
     model: spec.src,
     height: spec.height,

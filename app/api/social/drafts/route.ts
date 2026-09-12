@@ -1,9 +1,9 @@
 import { env } from 'cloudflare:workers';
-import { NiaDrafts } from '@/db/nia-drafts';
+import { ZuriDrafts } from '@/db/zuri-drafts';
 import { XConnection } from '@/db/x-connection';
 import { XClient, XError, xConfig, equalSecret } from '@/lib/x-auth';
 import { X_HEADERS } from '../x/route';
-import { loadNiaImage } from '@/lib/nia-media-server';
+import { loadZuriImage } from '@/lib/zuri-media-server';
 export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       throw new XError('forbidden', 403);
     const credential = request.headers.get('authorization') || '';
     const workerKey = (env as unknown as Record<string, unknown>)
-      .FIELD_NIA_WORKER_KEY;
+      .FIELD_ZURI_WORKER_KEY;
     const owner =
       credential.length <= 128 &&
       (await equalSecret(credential, 'Bearer ' + c.ownerKey));
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const body = await request.text();
     if (body.length > 18000) throw new XError('invalid_request');
     const v = JSON.parse(body),
-      service = new NiaDrafts(env.DB);
+      service = new ZuriDrafts(env.DB);
     if (!owner && !['list', 'claim', 'complete', 'fail'].includes(v.action))
       throw new XError('worker_cannot_publish', 403);
     if (v.action === 'list')
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
             ? [
                 await client.uploadImage(
                   token,
-                  await loadNiaImage(c.origin, mediaId),
+                  await loadZuriImage(c.origin, mediaId),
                 ),
               ]
             : [];

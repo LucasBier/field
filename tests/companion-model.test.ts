@@ -8,7 +8,7 @@ import {
 } from '../lib/companion-model';
 
 const spec: CompanionModelSpec = {
-  src: '/characters/nia-test.glb',
+  src: '/characters/zuri-test.glb',
   height: 1.68,
   clips: {},
 };

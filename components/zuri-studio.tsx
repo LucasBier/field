@@ -1,14 +1,14 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import type { NiaDraft } from '@/db/nia-drafts';
+import type { ZuriDraft } from '@/db/zuri-drafts';
 import {
-  NIA_DAILY_POST_LIMIT,
+  ZURI_DAILY_POST_LIMIT,
   postWeight,
   type PublicBrief,
   type PublicCandidate,
-} from '@/lib/nia-public';
-import { NIA_MEDIA, niaMedia } from '@/lib/nia-media';
+} from '@/lib/zuri-public';
+import { ZURI_MEDIA, zuriMedia } from '@/lib/zuri-media';
 const fieldStyle = {
   display: 'block',
   width: '100%',
@@ -18,7 +18,7 @@ const fieldStyle = {
   margin: '6px 0 16px',
   fontSize: 16,
 } as const;
-export function NiaStudio({ ownerKey }: { ownerKey: string }) {
+export function ZuriStudio({ ownerKey }: { ownerKey: string }) {
   const [kind, setKind] = useState<PublicBrief['kind']>('thought'),
     [topic, setTopic] = useState(''),
     [source, setSource] = useState(''),
@@ -27,7 +27,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
     [mediaId, setMediaId] = useState(''),
     [certainty, setCertainty] =
       useState<PublicBrief['source']['certainty']>('developing'),
-    [rows, setRows] = useState<NiaDraft[]>([]),
+    [rows, setRows] = useState<ZuriDraft[]>([]),
     [message, setMessage] = useState(''),
     [busy, setBusy] = useState(false);
   const [edits, setEdits] = useState<Record<string, string>>({}),
@@ -43,7 +43,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
     });
     const data = (await r.json()) as {
       error?: string;
-      drafts?: NiaDraft[];
+      drafts?: ZuriDraft[];
       postId?: string;
     };
     if (!r.ok) throw new Error(data.error || 'Request could not be completed.');
@@ -81,14 +81,14 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
     <section
       style={{ marginTop: 56, borderTop: '1px solid #ddd', paddingTop: 28 }}
     >
-      <h2 style={{ fontSize: 28 }}>Nia’s public notebook</h2>
+      <h2 style={{ fontSize: 28 }}>Zuri’s public notebook</h2>
       <p>
         Give her a topic, an event, or something to respond to. She can form a
         view, ask a question, or decide there is nothing useful to add.
       </p>
-      <label htmlFor="nia-kind">Write a</label>
+      <label htmlFor="zuri-kind">Write a</label>
       <select
-        id="nia-kind"
+        id="zuri-kind"
         value={kind}
         onChange={(e) => setKind(e.target.value as PublicBrief['kind'])}
         style={fieldStyle}
@@ -99,25 +99,25 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
       </select>
       {kind === 'thought' && (
         <>
-          <label htmlFor="nia-photo">Portrait</label>
+          <label htmlFor="zuri-photo">Portrait</label>
           <select
-            id="nia-photo"
+            id="zuri-photo"
             value={mediaId}
             onChange={(e) => setMediaId(e.target.value)}
             style={fieldStyle}
           >
             <option value="">Text only</option>
-            {NIA_MEDIA.map((asset) => (
+            {ZURI_MEDIA.map((asset) => (
               <option key={asset.id} value={asset.id}>
                 {asset.title}
               </option>
             ))}
           </select>
-          {niaMedia(mediaId) && (
+          {zuriMedia(mediaId) && (
             <Image
               unoptimized
-              src={niaMedia(mediaId)!.path}
-              alt={niaMedia(mediaId)!.description}
+              src={zuriMedia(mediaId)!.path}
+              alt={zuriMedia(mediaId)!.description}
               width={224}
               height={280}
               style={{ borderRadius: 12, objectFit: 'cover', marginBottom: 16 }}
@@ -125,24 +125,24 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
           )}
           {mediaId && (
             <p>
-              A fictional portrait of Nia. Describe the image without inventing
+              A fictional portrait of Zuri. Describe the image without inventing
               a real outing.
             </p>
           )}
         </>
       )}
-      <label htmlFor="nia-topic">Topic</label>
+      <label htmlFor="zuri-topic">Topic</label>
       <input
-        id="nia-topic"
+        id="zuri-topic"
         value={topic}
         maxLength={240}
         onChange={(e) => setTopic(e.target.value)}
         placeholder="A film ending you disagree with, a design change, a question worth asking…"
         style={fieldStyle}
       />
-      <label htmlFor="nia-source">Public source text</label>
+      <label htmlFor="zuri-source">Public source text</label>
       <textarea
-        id="nia-source"
+        id="zuri-source"
         rows={5}
         maxLength={6000}
         value={source}
@@ -150,9 +150,9 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
         placeholder="Paste the relevant facts or the post she is responding to. Keep private conversations out."
         style={fieldStyle}
       />
-      <label htmlFor="nia-url">Source link</label>
+      <label htmlFor="zuri-url">Source link</label>
       <input
-        id="nia-url"
+        id="zuri-url"
         type="url"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
@@ -161,9 +161,9 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
       />
       {kind !== 'thought' && (
         <>
-          <label htmlFor="nia-certainty">Source status</label>
+          <label htmlFor="zuri-certainty">Source status</label>
           <select
-            id="nia-certainty"
+            id="zuri-certainty"
             value={certainty}
             onChange={(e) =>
               setCertainty(e.target.value as PublicBrief['source']['certainty'])
@@ -180,9 +180,9 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
       )}
       {kind === 'reply' && (
         <>
-          <label htmlFor="nia-reply">Original X post ID</label>
+          <label htmlFor="zuri-reply">Original X post ID</label>
           <input
-            id="nia-reply"
+            id="zuri-reply"
             value={replyTo}
             onChange={(e) => setReplyTo(e.target.value)}
             placeholder="The number at the end of the post link"
@@ -232,7 +232,7 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
       <p style={{ color: '#665d75' }}>
         Only public material belongs here. Links are references; their contents
         are not fetched automatically. Publishing requires your review and is
-        limited to {NIA_DAILY_POST_LIMIT} original posts per UTC day.
+        limited to {ZURI_DAILY_POST_LIMIT} original posts per UTC day.
       </p>
       {rows
         .filter((row) => row.phase !== 'discarded')
@@ -257,18 +257,18 @@ export function NiaStudio({ ownerKey }: { ownerKey: string }) {
                 {brief.kind} · {row.phase}
               </p>
               <h3 style={{ fontSize: 20 }}>{brief.topic}</h3>
-              {niaMedia(brief.mediaId) && (
+              {zuriMedia(brief.mediaId) && (
                 <figure style={{ margin: '16px 0' }}>
                   <Image
                     unoptimized
-                    src={niaMedia(brief.mediaId)!.path}
-                    alt={niaMedia(brief.mediaId)!.description}
+                    src={zuriMedia(brief.mediaId)!.path}
+                    alt={zuriMedia(brief.mediaId)!.description}
                     width={224}
                     height={280}
                     style={{ borderRadius: 12, objectFit: 'cover' }}
                   />
                   <figcaption>
-                    {niaMedia(brief.mediaId)!.title} · Fictional portrait
+                    {zuriMedia(brief.mediaId)!.title} · Fictional portrait
                   </figcaption>
                 </figure>
               )}

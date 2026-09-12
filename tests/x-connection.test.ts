@@ -26,7 +26,7 @@ function database() {
   const sql = new DatabaseSync(':memory:');
   sql.exec(
     readFileSync(
-      new URL('../drizzle/0002_x_connection.sql', import.meta.url),
+      new URL('../drizzle/0000_field.sql', import.meta.url),
       'utf8',
     ),
   );
@@ -78,7 +78,7 @@ function fixture(
       });
     }
     return Response.json({
-      data: { id: options.id ?? '12345', username: 'NiaExample', name: 'Nia' },
+      data: { id: options.id ?? '12345', username: 'ZuriExample', name: 'Zuri' },
     });
   };
   return {

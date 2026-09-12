@@ -4,8 +4,13 @@ import { validUsage, type TokenUsage } from './runtime-schema';
 import { HostedError, type HostedConfig } from './hosted-config';
 import { eventData, partialReply } from './event-stream';
 import { localResponse } from './local-provider';
+import type { DeskContext } from './desk-context';
 
-export function hostedMessages(w: Workspace, request: string) {
+export function hostedMessages(
+  w: Workspace,
+  request: string,
+  desk?: DeskContext,
+) {
   return [
     {
       role: 'system',
@@ -15,7 +20,10 @@ export function hostedMessages(w: Workspace, request: string) {
     },
     {
       role: 'user',
-      content: JSON.stringify({ context: entityContext(w, request), request }),
+      content: JSON.stringify({
+        context: { ...entityContext(w, request), desk },
+        request,
+      }),
     },
   ];
 }

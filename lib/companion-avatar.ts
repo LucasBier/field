@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { NIA } from './companion-character';
-import { NIA_MODEL, loadCompanionModel } from './companion-model';
+import { ZURI } from './companion-character';
+import { ZURI_MODEL, loadCompanionModel } from './companion-model';
 
 export type CompanionPose =
   | 'idle'
@@ -12,7 +12,7 @@ export type CompanionPose =
 
 type Ring = [height: number, width: number, depth: number];
 
-// Articulated body and motion curves for the Nia character specification.
+// Articulated body and motion curves for the Zuri character specification.
 function silhouette(rings: Ring[], segments = 48) {
   const positions: number[] = [];
   const indices: number[] = [];
@@ -107,19 +107,19 @@ export function disposeAvatar(root: THREE.Object3D) {
 
 export function createCompanion() {
   const body = new THREE.Group();
-  body.name = NIA.name;
+  body.name = ZURI.name;
   body.userData = {
-    characterId: NIA.id,
-    characterVersion: NIA.version,
+    characterId: ZURI.id,
+    characterVersion: ZURI.version,
     geometry: 'procedural',
   };
-  const palette = NIA.appearance.palette;
+  const palette = ZURI.appearance.palette;
   const skin = material(palette.skin, 0.78);
   const skinShadow = material(palette.skinDetail, 0.85);
   const lips = material(palette.lips, 0.74);
-  skin.name = 'Nia deep warm-brown skin';
-  skinShadow.name = 'Nia skin detail';
-  lips.name = 'Nia lips';
+  skin.name = 'Zuri deep warm-brown skin';
+  skinShadow.name = 'Zuri skin detail';
+  lips.name = 'Zuri lips';
   const navy = material(palette.dress, 0.84);
   const sleeveSurface = material(palette.sleeve, 0.88);
   const ivory = material(palette.collar, 0.92);
@@ -614,6 +614,6 @@ export function createCompanion() {
 }
 
 export function loadCompanion(signal?: AbortSignal) {
-  if (NIA_MODEL) return loadCompanionModel(NIA_MODEL, signal);
+  if (ZURI_MODEL) return loadCompanionModel(ZURI_MODEL, signal);
   return Promise.resolve(createCompanion());
 }

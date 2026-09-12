@@ -1,13 +1,13 @@
-import { niaMedia, type NiaMediaId } from './nia-media';
+import { zuriMedia, type ZuriMediaId } from './zuri-media';
 import { XError } from './x-auth';
 
 // Only immutable catalog assets from this deployment may be sent to X.
-export async function loadNiaImage(
+export async function loadZuriImage(
   origin: string,
-  id: NiaMediaId,
+  id: ZuriMediaId,
   transport: typeof fetch = fetch,
 ) {
-  const asset = niaMedia(id);
+  const asset = zuriMedia(id);
   if (!asset) throw new XError('invalid_media');
   const r = await transport(new URL(asset.path, origin), {
     redirect: 'error',

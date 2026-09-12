@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { NiaStudio } from '@/components/nia-studio';
+import { ZuriStudio } from '@/components/zuri-studio';
 export default function SocialConnection() {
   const [key, setKey] = useState(''),
     [result, setResult] = useState(''),
@@ -60,10 +60,10 @@ export default function SocialConnection() {
         Field
       </Link>
       <h1 style={{ fontSize: 36, margin: '28px 0 12px' }}>
-        Nia’s X connection
+        Zuri’s X connection
       </h1>
       <p>
-        Connect Nia’s account to Field. Only the account owner can manage this
+        Connect Zuri’s account to Field. Only the account owner can manage this
         connection.
       </p>
       <form
@@ -120,7 +120,7 @@ export default function SocialConnection() {
         Connecting does not publish a post. Verification reads the connected
         account through X’s API and may use API credits.
       </p>
-      <NiaStudio ownerKey={key} />
+      <ZuriStudio ownerKey={key} />
     </main>
   );
 }

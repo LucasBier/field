@@ -147,7 +147,7 @@ await test(
       scope: string;
     };
     assert.equal(bSaved.scope, b.scope);
-    assert.equal(bSaved.workspace.profile.name, 'Nia');
+    assert.equal(bSaved.workspace.profile.name, 'Zuri');
     assert.equal(bSaved.workspace.memories.length, 0);
     const readA = await fetch(`${url}/api/workspace`, {
       headers: { Cookie: a.cookie },

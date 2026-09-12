@@ -4,15 +4,15 @@
 
 **She remembers you. You still get to change.**
 
-Field is a persistent companion runtime with a spatial interface. Nia carries a saved identity, memories, relationships and unfinished plans across conversations and model changes. Her understanding stays open to correction: revise a memory, review related plans, and continue from the updated context.
+Field is a persistent companion runtime with a spatial interface. Zuri carries a saved identity, memories, relationships and unfinished plans across conversations and model changes. Her understanding stays open to correction: revise a memory, review related plans, and continue from the updated context.
 
 The runtime separates durable state from model inference. Models propose replies and bounded actions; Field validates permissions, context versions and storage revisions before committing them.
 
-## Meet Nia
+## Meet Zuri
 
-Nia is a 28-year-old Black woman with an observant eye, dry humor and a habit of giving unfinished ideas a shape. She can be affectionate, have a point of view, and recognize when company matters more than a plan. Her character asks how to remember someone without deciding who they have to remain.
+Zuri is a 28-year-old Black woman with an observant eye, dry humor and a habit of giving unfinished ideas a shape. She can be affectionate, have a point of view, and recognize when company matters more than a plan. Her character asks how to remember someone without deciding who they have to remain.
 
-Read [Nia’s character, visual and voice specification](docs/nia.md). Her identity and palette are shared by the model adapters and spatial body; spoken voice is a defined next step.
+Read [Zuri’s character, visual and voice specification](docs/zuri.md). Her identity and palette are shared by the model adapters and spatial body; spoken voice is a defined next step.
 
 ## Run locally
 
@@ -26,7 +26,7 @@ npm run db:setup
 npm run dev -- --port 3001
 ```
 
-Open **http://localhost:3001/space**. Room controls work without a model; conversations require a connection. The local database is created from committed migrations; no cloud account is needed for development.
+Open **http://localhost:3001/space**. Demo mode runs without a model. The local database is created from committed migrations; no cloud account is needed for development.
 
 For real local inference, install Ollama. Keep its service running in one terminal and download the model from another:
 
@@ -35,7 +35,7 @@ npm run model:serve
 ```
 
 ```sh
-npm run model:pull -- <your-model>
+npm run model:pull
 ```
 
 Create `.dev.vars` with:
@@ -43,7 +43,7 @@ Create `.dev.vars` with:
 ```dotenv
 FIELD_AI_ENABLED="true"
 FIELD_AI_PROVIDER="ollama"
-FIELD_AI_MODEL="your-model"
+FIELD_AI_MODEL="qwen3.5:9b"
 FIELD_AI_CONCURRENCY="1"
 FIELD_AI_VISITOR_TURNS="100"
 ```

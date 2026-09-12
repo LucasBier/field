@@ -1,5 +1,7 @@
 import { getVisitor } from '@/db/visitor';
 import { getWorkspace } from '@/db/workspace';
+import { deskStore } from '@/db/desk';
+import { deskContext } from '@/lib/desk-context';
 import {
   commitHostedTurn,
   findHostedTurn,
@@ -146,7 +148,8 @@ export async function POST(request: Request) {
             supersededBy,
           })),
       );
-    const messages = hostedMessages(started.workspace, message);
+    const desk = deskContext((await deskStore().read(scope)).state);
+    const messages = hostedMessages(started.workspace, message, desk);
     const reserved = reserveMicros(messages, config);
     request.signal.throwIfAborted();
     await reserveHostedTurn(

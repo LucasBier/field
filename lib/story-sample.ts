@@ -5,7 +5,7 @@ export function storySample(): Workspace {
   return {
     ...initialWorkspace(),
     entity: {
-      id: 'nia-sample-01',
+      id: 'zuri-sample-01',
       bornAt: '2026-09-01T08:00:00Z',
       zone: 'center',
       tasks: [],

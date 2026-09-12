@@ -54,7 +54,7 @@ export function RuntimeInspector({
               <Activity size={32} />
               <h3>A clear record, from the first turn.</h3>
               <p>
-                Send Nia a message. Its path through memory, response, and
+                Send Zuri a message. Its path through memory, response, and
                 actions will appear here.
               </p>
             </div>
@@ -77,8 +77,8 @@ export function RuntimeInspector({
                     {run.provider === 'demo'
                       ? 'Room controls · no inference'
                       : run.provider === 'ollama'
-                        ? 'Nia · Local connection'
-                        : 'Nia · Connected'}
+                        ? 'Zuri · Local connection'
+                        : 'Zuri · Connected'}
                   </span>
                   <ArrowDown size={14} />
                 </summary>

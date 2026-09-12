@@ -151,7 +151,7 @@ export function createCompanionInteraction(
     hand.updateWorldMatrix(false, true);
   }
   const book = new THREE.Group();
-  book.name = 'Nia’s open book';
+  book.name = 'Zuri’s open book';
   book.visible = false;
   const cover = new THREE.MeshStandardMaterial({
     color: '#665074',

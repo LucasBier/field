@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1788903620144,
-      "tag": "0000_real_wallflower",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1788915718907,
-      "tag": "0001_volatile_bloodstorm",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1788928683551,
-      "tag": "0002_x_connection",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1788929761273,
-      "tag": "0003_nia_drafts",
+      "when": 1789210181031,
+      "tag": "0000_field",
       "breakpoints": true
     }
   ]

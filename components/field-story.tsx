@@ -154,7 +154,7 @@ const chapters = [
         <em>something shared.</em>
       </>
     ),
-    text: 'Leave a thought by the window. Make a plan at the desk. Give Nia a way to participate in your world, with boundaries that belong to you.',
+    text: 'Leave a thought by the window. Make a plan at the desk. Give Zuri a way to participate in your world, with boundaries that belong to you.',
     technical:
       'Typed actions pass through permissions before anything changes. Every committed action leaves a receipt.',
   },
@@ -165,7 +165,7 @@ const chapters = [
       <>
         Different models.
         <br />
-        <em>The same Nia.</em>
+        <em>The same Zuri.</em>
       </>
     ),
     text: 'More capable models will come. New bodies and new spaces will follow. The relationship you have built should be able to come with you.',
@@ -320,7 +320,7 @@ function ContinuityWalkthrough() {
     const url = URL.createObjectURL(data);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'nia-sample-agent.json';
+    a.download = 'zuri-sample-agent.json';
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
@@ -335,8 +335,8 @@ function ContinuityWalkthrough() {
         <div className="identity-orbit">
           <Fingerprint size={52} strokeWidth={0.8} />
         </div>
-        <h3>Nia</h3>
-        <p>nia-sample-01</p>
+        <h3>Zuri</h3>
+        <p>zuri-sample-01</p>
       </div>
       <div
         className="walkthrough-models"

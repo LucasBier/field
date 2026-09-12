@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { NIA } from '@/lib/companion-character';
+import { ZURI } from '@/lib/companion-character';
 import {
   Check,
   Download,
@@ -514,7 +514,7 @@ export default function AgentPanels({
                       </span>
                       <p>{r.detail}</p>
                       <small>
-                        {r.actor === 'you' ? 'Room action' : 'Nia'} ·{' '}
+                        {r.actor === 'you' ? 'Room action' : 'Zuri'} ·{' '}
                         {new Date(r.at).toLocaleTimeString('en-US', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -541,16 +541,16 @@ export default function AgentPanels({
                 )}
                 <figure className="companion-portrait-card">
                   <Image
-                    src={NIA.appearance.portrait}
+                    src={ZURI.appearance.portrait}
                     width={1254}
                     height={1254}
-                    alt={NIA.appearance.alt}
+                    alt={ZURI.appearance.alt}
                     loading="lazy"
                     unoptimized
                   />
-                  <figcaption>Nia · NEE-uh · she/her</figcaption>
+                  <figcaption>Zuri · ZOO-ree · she/her</figcaption>
                 </figure>
-                <p className="panel-help">{NIA.introduction}</p>
+                <p className="panel-help">{ZURI.introduction}</p>
                 <p className="panel-help">
                   A Black woman, character age 28. Warm, candid, and quietly
                   funny.

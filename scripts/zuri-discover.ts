@@ -1,9 +1,9 @@
-import { discoverPublicSignals } from '../lib/nia-discovery';
+import { discoverPublicSignals } from '../lib/zuri-discovery';
 
-const endpoint = process.env.FIELD_NIA_PUBLIC_FEED;
+const endpoint = process.env.FIELD_ZURI_PUBLIC_FEED;
 if (!endpoint)
   throw new Error(
-    'Set FIELD_NIA_PUBLIC_FEED to the local read-only public-post endpoint.',
+    'Set FIELD_ZURI_PUBLIC_FEED to the local read-only public-post endpoint.',
   );
 const url = new URL(endpoint);
 if (

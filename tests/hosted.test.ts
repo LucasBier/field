@@ -32,7 +32,7 @@ function stream(text: string, size = 1) {
 const sse = (value: unknown) =>
   `data: ${typeof value === 'string' ? value : JSON.stringify(value)}\n\n`;
 function providerEvents(
-  reply = '{"reply":"Hello, Nia.","actions":[]}',
+  reply = '{"reply":"Hello, Zuri.","actions":[]}',
   finish = 'stop',
   usage: unknown = {
     prompt_tokens: 10,
@@ -86,7 +86,7 @@ await test('hosted inference requires an explicit key, budget and rates; product
   );
 });
 await test('reservations count UTF-8 input and maximum output, with a strict context bound', () => {
-  const content = [{ content: 'A conversation with Nia.' }];
+  const content = [{ content: 'A conversation with Zuri.' }];
   assert.ok(reserveMicros(content, config) > usageMicros(100, 100, config));
   assert.ok(
     reserveMicros('你好'.repeat(500), config) >
@@ -97,10 +97,10 @@ await test('reservations count UTF-8 input and maximum output, with a strict con
 await test('SSE decoding handles fragmented UTF-8, CRLF, multiple data lines and comments', async () => {
   const events = [];
   for await (const data of eventData(
-    stream(': keepalive\r\ndata: 你好\r\ndata: Nia\r\n\r\ndata: [DONE]\n\n'),
+    stream(': keepalive\r\ndata: 你好\r\ndata: Zuri\r\n\r\ndata: [DONE]\n\n'),
   ))
     events.push(data);
-  assert.deepEqual(events, ['你好\nNia', '[DONE]']);
+  assert.deepEqual(events, ['你好\nZuri', '[DONE]']);
 });
 await test('SSE decoding rejects truncated and oversized events and aborts a blocked read', async () => {
   const consume = async (
@@ -121,8 +121,8 @@ await test('SSE decoding rejects truncated and oversized events and aborts a blo
 });
 await test('provisional speech decodes escapes without displaying action JSON or incomplete surrogate pairs', () => {
   assert.equal(
-    partialReply('{"reply":"Hello\\nNia\\u0021","actions":[{"type":"task"}]}'),
-    'Hello\nNia!',
+    partialReply('{"reply":"Hello\\nZuri\\u0021","actions":[{"type":"task"}]}'),
+    'Hello\nZuri!',
   );
   assert.equal(
     partialReply('{"actions":[],"reply":"Hidden until complete"}'),
@@ -150,11 +150,11 @@ await test('provider streams provisional text, validates complete actions and ac
       (value) => shown.push(value),
     );
     assert.deepEqual(result, {
-      reply: 'Hello, Nia.',
+      reply: 'Hello, Zuri.',
       actions: [],
       usage: { input: 10, output: 5, total: 15 },
     });
-    assert.deepEqual(shown, ['Hello, Nia.']);
+    assert.deepEqual(shown, ['Hello, Zuri.']);
     assert.equal(sent!.stream, true);
     assert.deepEqual(sent!.stream_options, { include_usage: true });
   } finally {

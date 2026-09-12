@@ -219,7 +219,7 @@ export function useWorkspace() {
       }
       await flush();
       flushed = true;
-      setStatus('Nia is responding…');
+      setStatus('Zuri is responding…');
       await action(revision.current);
     } finally {
       try {

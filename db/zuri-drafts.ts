@@ -1,11 +1,11 @@
 import {
-  NIA_DAILY_POST_LIMIT,
+  ZURI_DAILY_POST_LIMIT,
   publicBrief,
   publicCandidate,
-} from '../lib/nia-public';
-import type { NiaMediaId } from '../lib/nia-media';
+} from '../lib/zuri-public';
+import type { ZuriMediaId } from '../lib/zuri-media';
 import { digest, XError } from '../lib/x-auth';
-export type NiaDraft = {
+export type ZuriDraft = {
   id: string;
   brief: string;
   candidate: string | null;
@@ -16,15 +16,15 @@ export type NiaDraft = {
   created_at: number;
   updated_at: number;
 };
-export class NiaDrafts {
+export class ZuriDrafts {
   constructor(private db: D1Database) {}
   async list() {
     return (
       await this.db
         .prepare(
-          "SELECT * FROM nia_drafts WHERE phase IN ('queued','generating') OR id IN (SELECT id FROM nia_drafts ORDER BY created_at DESC LIMIT 40) OR id IN (SELECT id FROM nia_drafts WHERE phase='published' ORDER BY updated_at DESC LIMIT 12) ORDER BY created_at DESC",
+          "SELECT * FROM zuri_drafts WHERE phase IN ('queued','generating') OR id IN (SELECT id FROM zuri_drafts ORDER BY created_at DESC LIMIT 40) OR id IN (SELECT id FROM zuri_drafts WHERE phase='published' ORDER BY updated_at DESC LIMIT 12) ORDER BY created_at DESC",
         )
-        .all<NiaDraft>()
+        .all<ZuriDraft>()
     ).results;
   }
   async queue(input: unknown) {
@@ -33,7 +33,7 @@ export class NiaDrafts {
       id = crypto.randomUUID();
     const r = await this.db
       .prepare(
-        "INSERT INTO nia_drafts (id,brief,phase,revision,created_at,updated_at) SELECT ?,?,'queued',0,?,? WHERE (SELECT COUNT(*) FROM nia_drafts WHERE phase IN ('queued','generating'))<20",
+        "INSERT INTO zuri_drafts (id,brief,phase,revision,created_at,updated_at) SELECT ?,?,'queued',0,?,? WHERE (SELECT COUNT(*) FROM zuri_drafts WHERE phase IN ('queued','generating'))<20",
       )
       .bind(id, JSON.stringify(brief), now, now)
       .run();
@@ -43,10 +43,10 @@ export class NiaDrafts {
   async claim(id: string, revision: number) {
     return this.db
       .prepare(
-        "UPDATE nia_drafts SET phase='generating',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='queued' RETURNING *",
+        "UPDATE zuri_drafts SET phase='generating',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='queued' RETURNING *",
       )
       .bind(Date.now(), id, revision)
-      .first<NiaDraft>();
+      .first<ZuriDraft>();
   }
   async complete(id: string, revision: number, value: unknown) {
     const row = await this.get(id),
@@ -57,7 +57,7 @@ export class NiaDrafts {
         : null;
     const r = await this.db
       .prepare(
-        "UPDATE nia_drafts SET candidate=?,fingerprint=?,phase=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='generating'",
+        "UPDATE zuri_drafts SET candidate=?,fingerprint=?,phase=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='generating'",
       )
       .bind(
         JSON.stringify(candidate),
@@ -74,7 +74,7 @@ export class NiaDrafts {
   async fail(id: string, revision: number) {
     return this.db
       .prepare(
-        "UPDATE nia_drafts SET phase='failed',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='generating'",
+        "UPDATE zuri_drafts SET phase='failed',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='generating'",
       )
       .bind(Date.now(), id, revision)
       .run();
@@ -92,7 +92,7 @@ export class NiaDrafts {
     );
     const r = await this.db
       .prepare(
-        "UPDATE nia_drafts SET candidate=?,fingerprint=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='draft'",
+        "UPDATE zuri_drafts SET candidate=?,fingerprint=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='draft'",
       )
       .bind(
         JSON.stringify(candidate),
@@ -108,7 +108,7 @@ export class NiaDrafts {
   async discard(id: string, revision: number) {
     const r = await this.db
       .prepare(
-        "UPDATE nia_drafts SET phase='discarded',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase IN ('queued','generating','draft','failed','skipped')",
+        "UPDATE zuri_drafts SET phase='discarded',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase IN ('queued','generating','draft','failed','skipped')",
       )
       .bind(Date.now(), id, revision)
       .run();
@@ -117,9 +117,9 @@ export class NiaDrafts {
   }
   async get(id: string) {
     const r = await this.db
-      .prepare('SELECT * FROM nia_drafts WHERE id=?')
+      .prepare('SELECT * FROM zuri_drafts WHERE id=?')
       .bind(id)
-      .first<NiaDraft>();
+      .first<ZuriDraft>();
     if (!r) throw new XError('draft_missing', 404);
     return r;
   }
@@ -127,7 +127,7 @@ export class NiaDrafts {
     id: string,
     revision: number,
     approvedText: string,
-    send: (text: string, mediaId?: NiaMediaId) => Promise<string>,
+    send: (text: string, mediaId?: ZuriMediaId) => Promise<string>,
     approvedMediaId = '',
   ) {
     const row = await this.get(id),
@@ -147,7 +147,7 @@ export class NiaDrafts {
     // Claim, global exclusion, duplicate prevention and daily cap are one atomic write.
     const lock = await this.db
       .prepare(
-        "UPDATE nia_drafts SET phase='publishing',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='draft' AND NOT EXISTS (SELECT 1 FROM nia_drafts WHERE phase IN ('publishing','uncertain')) AND NOT EXISTS (SELECT 1 FROM nia_drafts WHERE fingerprint=? AND phase='published') AND (SELECT COUNT(*) FROM nia_drafts WHERE phase='published' AND updated_at>=?)<?",
+        "UPDATE zuri_drafts SET phase='publishing',revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='draft' AND NOT EXISTS (SELECT 1 FROM zuri_drafts WHERE phase IN ('publishing','uncertain')) AND NOT EXISTS (SELECT 1 FROM zuri_drafts WHERE fingerprint=? AND phase='published') AND (SELECT COUNT(*) FROM zuri_drafts WHERE phase='published' AND updated_at>=?)<?",
       )
       .bind(
         Date.now(),
@@ -155,7 +155,7 @@ export class NiaDrafts {
         revision,
         row.fingerprint,
         day,
-        NIA_DAILY_POST_LIMIT,
+        ZURI_DAILY_POST_LIMIT,
       )
       .run();
     if (!lock.meta.changes)
@@ -164,7 +164,7 @@ export class NiaDrafts {
       const postId = await send(candidate.text, brief.mediaId);
       const r = await this.db
         .prepare(
-          "UPDATE nia_drafts SET phase='published',post_id=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='publishing'",
+          "UPDATE zuri_drafts SET phase='published',post_id=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? AND phase='publishing'",
         )
         .bind(postId, Date.now(), id, revision + 1)
         .run();
@@ -174,7 +174,7 @@ export class NiaDrafts {
       // A timeout can happen after X has accepted a post. Never retry or unlock implicitly.
       await this.db
         .prepare(
-          "UPDATE nia_drafts SET phase='uncertain',revision=revision+1,updated_at=? WHERE id=? AND phase='publishing'",
+          "UPDATE zuri_drafts SET phase='uncertain',revision=revision+1,updated_at=? WHERE id=? AND phase='publishing'",
         )
         .bind(Date.now(), id)
         .run();

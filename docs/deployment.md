@@ -17,7 +17,7 @@ is included in a build or source download.
 1. Create a D1 database in the same region as the Vercel function.
 2. Copy `deploy/database.example.json` to `deploy/database.local.json` and fill in
    the database ID. The local configuration is excluded from source downloads and Git.
-3. Apply both migrations and deploy the database endpoint:
+3. Apply the schema migrations and deploy the database endpoint:
 
 ```sh
 npx wrangler d1 migrations apply DB --remote --config deploy/database.local.json
@@ -62,7 +62,7 @@ revisions and cross-origin mutations. The storage endpoint must return 401 witho
 its server credential. A successful deployment alone does not verify inference.
 
 Local Ollama stays on the developer's machine. The production runtime deliberately
-does not enable a loopback model. Visitors can use the demo and connect their own
+does not enable a loopback model. Visitors can explore the space and connect their own
 supported provider; shared conversations require the server-side provider key,
 rates, limits and budget described in `SETUP.md`.
 
@@ -77,3 +77,7 @@ the workspace and reconcile its revision instead of blindly resubmitting it.
 
 This deployment starts with an empty production database. Local conversations and
 the old hosted database remain separate and are not uploaded automatically.
+
+## Private desk evidence
+
+Vercel uses the authenticated D1 adapter for task records and private camera evidence. Evidence is stored in 128 KiB chunks and is readable only after upload completion. Images are capped at 256 KiB and video segments at 4 MiB. Local development uses its R2 binding. Apply `drizzle/0000_field.sql` to a fresh database; existing installations must preserve their data and baseline the current schema before using the new migration history. Never replay a fresh schema over an existing database.

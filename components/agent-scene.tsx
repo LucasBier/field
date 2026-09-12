@@ -32,6 +32,7 @@ export default function AgentScene({
   onMove,
   compact = false,
   paused = false,
+  framing,
 }: {
   zone?: Zone;
   busy?: boolean;
@@ -39,6 +40,7 @@ export default function AgentScene({
   onMove?: (z: Zone) => void;
   compact?: boolean;
   paused?: boolean;
+  framing?: View;
 }) {
   const [modelState, setModelState] = useState<'loading' | 'ready' | 'error'>(
     'loading',
@@ -50,7 +52,9 @@ export default function AgentScene({
     curtains: false,
     music: false,
   });
-  const [view, setView] = useState<View>(compact ? 'close' : 'room');
+  const [view, setView] = useState<View>(
+    framing ?? (compact ? 'close' : 'follow'),
+  );
   const [notice, setNotice] = useState('');
   const [autonomy, setAutonomy] = useState(true);
   const [activityLabel, setActivityLabel] = useState('Here with you');
@@ -109,7 +113,7 @@ export default function AgentScene({
     renderer.domElement.tabIndex = 0;
     renderer.domElement.setAttribute(
       'aria-label',
-      'Explore Nia’s room. Drag to look around and select the floor to walk.',
+      'Explore Zuri’s room. Drag to look around and select the floor to walk.',
     );
     element.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
@@ -157,8 +161,8 @@ export default function AgentScene({
         camera.position.set(p.x + face.x, p.y + 1.5, p.z + face.z);
         controls.target.set(p.x, p.y + 1.3, p.z);
       } else {
-        camera.position.set(p.x + 1.2, 1.62, p.z + 3.7);
-        controls.target.set(p.x, 0.95, p.z);
+        camera.position.set(p.x + 0.75, p.y + 1.38, p.z + 2.85);
+        controls.target.set(p.x, p.y + 0.9, p.z);
       }
       controls.update();
     }
@@ -242,7 +246,7 @@ export default function AgentScene({
         }
       } else
         setNotice(
-          'Nia could not find a clear way there. Try an open place first.',
+          'Zuri could not find a clear way there. Try an open place first.',
         );
     };
     commands.current = {
@@ -291,8 +295,8 @@ export default function AgentScene({
         return materials.some((m) => m.opacity >= 0.2);
       });
       const first = hits[0];
-      if (first?.object.userData.niaActivity)
-        chooseActivity(first.object.userData.niaActivity as RoomActivity);
+      if (first?.object.userData.zuriActivity)
+        chooseActivity(first.object.userData.zuriActivity as RoomActivity);
       else if (first?.object.userData.roomAction)
         act(first.object.userData.roomAction as RoomAction);
       else {
@@ -364,7 +368,7 @@ export default function AgentScene({
       const w = element.clientWidth,
         h = element.clientHeight;
       if (!w || !h) return;
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       const nextNarrow = w < 700;
@@ -373,7 +377,11 @@ export default function AgentScene({
         frameView(latest.current.view);
       }
     };
-    const observer = new ResizeObserver(resize);
+    let resizeFrame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(resize);
+    });
     observer.observe(element);
     resize();
     let visible = false;
@@ -515,6 +523,7 @@ export default function AgentScene({
       cancelAnimationFrame(frame);
       audio.dispose();
       observer.disconnect();
+      cancelAnimationFrame(resizeFrame);
       visibility.disconnect();
       controls.dispose();
       renderer.domElement.removeEventListener('pointerdown', down);
@@ -544,7 +553,7 @@ export default function AgentScene({
           <output className="character-loading">
             <span>
               {modelState === 'loading'
-                ? 'Preparing Nia’s room…'
+                ? 'Preparing Zuri’s room…'
                 : 'Her 3D appearance could not load.'}
             </span>
             {modelState === 'error' && (
@@ -576,15 +585,15 @@ export default function AgentScene({
                 checked={autonomy}
                 onChange={(e) => setAutonomy(e.target.checked)}
               />
-              Let Nia choose
+              Let Zuri choose
             </label>
           </div>
           <div className="room-activity-actions">
-            <label className="sr-only" htmlFor="nia-activity">
-              Nia’s activity
+            <label className="sr-only" htmlFor="zuri-activity">
+              Zuri’s activity
             </label>
             <select
-              id="nia-activity"
+              id="zuri-activity"
               value={activity ?? ''}
               disabled={modelState !== 'ready'}
               onChange={(e) =>

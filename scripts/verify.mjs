@@ -199,7 +199,12 @@ async function integration() {
   const provider = start(['tests/fixtures/provider.mjs'], project, {
     FIELD_FIXTURE_PORT: String(providerPort),
   });
-  await ready(provider, `${providerUrl}/calls`, Array.isArray, 'Offline provider fixture ready.');
+  await ready(
+    provider,
+    `${providerUrl}/calls`,
+    Array.isArray,
+    'Offline provider fixture ready.',
+  );
   const config = {
     FIELD_LOCAL_WORKSPACE: 'false',
     FIELD_AI_ENABLED: 'true',
@@ -267,6 +272,7 @@ async function integration() {
     [
       'tests/storage.test.ts',
       'tests/visitor.test.ts',
+      'tests/desk-http.test.ts',
       'tests/hosted-storage.test.ts',
     ],
     { FIELD_TEST_GUESTS: '1', FIELD_TEST_HOSTED: '1' },

@@ -1,6 +1,6 @@
 import type { Entity } from './entity-schema';
 import type { AgentRun } from './runtime-schema';
-import { NIA } from './companion-character';
+import { ZURI } from './companion-character';
 export type Kind = 'pendulum' | 'spring';
 export type Parameters = {
   length: number;
@@ -68,7 +68,7 @@ export const uid = () => crypto.randomUUID();
 export const stamp = () => new Date().toISOString();
 export const PREVIOUS_COMPANION_PURPOSE =
   'Be a warm, thoughtful female AI companion. Share everyday conversations, remember what matters, and make plans together. Be affectionate at my pace, with your own point of view.';
-export const COMPANION_PURPOSE = NIA.purpose;
+export const COMPANION_PURPOSE = ZURI.purpose;
 export const LEGACY_PURPOSE =
   'Build tangible experiments. Keep evidence. Stay curious.';
 export function createExperiment(
@@ -97,7 +97,7 @@ export function initialWorkspace(): Workspace {
   };
   return {
     profile: {
-      name: NIA.name,
+      name: ZURI.name,
       purpose: COMPANION_PURPOSE,
     },
     experiments: [first],
@@ -107,7 +107,7 @@ export function initialWorkspace(): Workspace {
       {
         id: 'welcome',
         role: 'assistant',
-        text: NIA.welcome,
+        text: ZURI.welcome,
         createdAt: first.createdAt,
         mode: 'demo',
       },

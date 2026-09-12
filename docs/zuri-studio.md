@@ -1,4 +1,4 @@
-# Nia's public studio
+# Zuri's public studio
 
 The studio turns an explicitly public brief into a personal thought, a sourced
 view on an event, or a reply draft. It uses the same character definition as the
@@ -7,16 +7,16 @@ It is not a trends monitor or an autonomous reply bot.
 
 ## Run
 
-Apply migration `0003_nia_drafts.sql` and deploy the application. Configure a new
-32-byte random `FIELD_NIA_WORKER_KEY` as a sensitive server variable. Put only
-`FIELD_X_ORIGIN` and `FIELD_NIA_WORKER_KEY` in a private JSON file on the machine
+Apply migration `0000_field.sql` and deploy the application. Configure a new
+32-byte random `FIELD_ZURI_WORKER_KEY` as a sensitive server variable. Put only
+`FIELD_X_ORIGIN` and `FIELD_ZURI_WORKER_KEY` in a private JSON file on the machine
 running Ollama. The worker credential can list, claim, complete or fail generation
 jobs. It cannot queue, edit or publish posts. The owner credential remains separate.
 
 ```sh
-FIELD_NIA_CREDENTIAL_FILE=/private/path/nia-worker.json npm run nia:drafts
+FIELD_ZURI_CREDENTIAL_FILE=/private/path/zuri-worker.json npm run zuri:drafts
 # Run continuously while this computer is on:
-FIELD_NIA_CREDENTIAL_FILE=/private/path/nia-worker.json npm run nia:drafts -- --watch
+FIELD_ZURI_CREDENTIAL_FILE=/private/path/zuri-worker.json npm run zuri:drafts -- --watch
 ```
 
 Ollama must serve `qwen3.5:9b` at `127.0.0.1:11434`. This process uses the local
@@ -74,7 +74,7 @@ that the model ran, not that its facts or judgment are correct. Character qualit
 
 ## Portraits and continuity
 
-The portrait catalog in `lib/nia-media.ts` contains authored scenes in everyday
+The portrait catalog in `lib/zuri-media.ts` contains authored scenes in everyday
 settings, including full-length standing and walking photographs. Each entry pins the image bytes with a
 SHA-256 digest. Briefs select an immutable catalog ID; arbitrary image URLs are
 rejected. The server loads the image only from the configured site origin,
@@ -83,7 +83,7 @@ returned media ID to the post. A media mismatch prevents publication. Image
 selection is part of the exact review and cannot be substituted after approval.
 
 These are fictional portraits of the same character, with different poses and
-expressions. They do not establish that Nia visited a cafe, bought a book or had a
+expressions. They do not establish that Zuri visited a cafe, bought a book or had a
 photographer. Captions may discuss styling, composition and mood; they must not
 invent a completed real-world activity. The existing avatar and spatial model
 remain separate assets. Generation provenance is retained in the image files.
@@ -98,8 +98,8 @@ headshots. Keep the existing interval and spacing between image posts.
 
 ## Public discovery and editorial scheduling
 
-`npm run nia:discover` reads a loopback-only public-post feed named by
-`FIELD_NIA_PUBLIC_FEED`. The adapter accepts up to 500 recent X posts and emits at
+`npm run zuri:discover` reads a loopback-only public-post feed named by
+`FIELD_ZURI_PUBLIC_FEED`. The adapter accepts up to 500 recent X posts and emits at
 most 30 relevant signals. It removes duplicate IDs, old or future timestamps,
 replies, malformed source URLs and unrelated topics. Interest matching covers
 film, music, photography, design, word games and AI memory. It is a bounded

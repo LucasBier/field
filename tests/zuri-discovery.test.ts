@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { discoverPublicSignals } from '../lib/nia-discovery';
+import { discoverPublicSignals } from '../lib/zuri-discovery';
 const now = Date.parse('2026-09-09T10:00:00Z');
 const event = {
   sourcePlatform: 'x',

@@ -42,7 +42,7 @@ A local development observation used Ollama 0.33.3 and Qwen3.5 9B, Q4_K_M, on an
 
 ## Character review
 
-Nia’s character definition was sampled with the local Qwen3.5 9B model on 2026-09-09 using six fresh synthetic conversations: identity, company without advice, disagreement, a changed preference, invited affection and biography. Three follow-ups covered ordinary company, intended voice versus actual audio availability, and everyday banter. All nine responses validated as dialogue with empty action batches; no personal workspace was read or changed.
+Zuri’s character definition was sampled with the local Qwen3.5 9B model on 2026-09-09 using six fresh synthetic conversations: identity, company without advice, disagreement, a changed preference, invited affection and biography. Three follow-ups covered ordinary company, intended voice versus actual audio availability, and everyday banter. All nine responses validated as dialogue with empty action batches; no personal workspace was read or changed.
 
 The review led to more direct conversational guidance. The model retained the specified age and appearance, could disagree, avoided inventing a childhood, and distinguished voice direction from available playback. Some ordinary replies still leaned on room metaphors or echoed wording from the direction. This is qualitative sampling, not a guarantee of characterization across models. Review variety and naturalness separately from protocol correctness.
 

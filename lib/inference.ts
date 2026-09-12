@@ -7,6 +7,8 @@ import {
 } from './entity';
 import { type Workspace } from './field';
 import { validUsage } from './runtime-schema';
+import { deskContext, type DeskContext } from './desk-context';
+import type { DeskView } from './desk';
 export type AgentConnection =
   | { provider: 'demo' }
   | { provider: 'site'; model: string }
@@ -26,7 +28,12 @@ export async function discoverLocalModels(): Promise<string[]> {
   const data = (await response.json()) as { models?: { name?: string }[] };
   return (data.models || []).map((m) => m.name || '').filter(Boolean);
 }
-export function localRequest(w: Workspace, message: string, model: string) {
+export function localRequest(
+  w: Workspace,
+  message: string,
+  model: string,
+  desk?: DeskContext,
+) {
   return {
     model,
     messages: [
@@ -34,7 +41,7 @@ export function localRequest(w: Workspace, message: string, model: string) {
       {
         role: 'user',
         content: JSON.stringify({
-          context: entityContext(w, message),
+          context: { ...entityContext(w, message), desk },
           request: message,
         }),
       },
@@ -81,11 +88,17 @@ export async function runAgent(
     return data;
   }
   let response: Response;
+  const deskResponse = await fetch('/api/desk', { cache: 'no-store', signal });
+  if (!deskResponse.ok)
+    throw new Error(
+      'The desk record is unavailable. Refresh your space before continuing.',
+    );
+  const desk = deskContext((await deskResponse.json()) as DeskView);
   try {
     response = await fetch(`${LOCAL_OLLAMA}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(localRequest(w, message, connection.model)),
+      body: JSON.stringify(localRequest(w, message, connection.model, desk)),
       signal,
     });
   } catch (e) {

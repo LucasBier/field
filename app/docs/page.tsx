@@ -8,7 +8,7 @@ import { ConnectionGuide } from '@/components/connection-guide';
 export const metadata: Metadata = {
   title: 'Field — Setup & configuration',
   description:
-    'Run Field locally, connect an AI model, customize Nia, and keep control of your workspace.',
+    'Run Field locally, connect an AI model, customize Zuri, and keep control of your workspace.',
 };
 
 export default function Docs() {
@@ -43,6 +43,7 @@ export default function Docs() {
         <a href="#customize">03 / Customize</a>
         <a href="#data">04 / Keep your history</a>
         <a href="#runtime">05 / Runtime</a>
+        <a href="#physical-desk">06 / Desk</a>
         <a href="#troubleshooting">Help</a>
       </nav>
       <div className="field-guide-body">
@@ -78,7 +79,7 @@ export default function Docs() {
               PowerShell blocks npm, use <code>npm.cmd</code> instead.
             </p>
             <p className="guide-note">
-              The source download contains application code and Nia’s character
+              The source download contains application code and Zuri’s character
               assets. It excludes saved workspaces, model keys, deployment
               credentials, and the hosted project binding.
             </p>
@@ -106,7 +107,7 @@ export default function Docs() {
               context: identity, saved memories, relationships, notes, and
               plans. A new connection begins with that same saved state.
             </p>
-            <h3>Run Nia on your computer.</h3>
+            <h3>Run Zuri on your computer.</h3>
             <p>
               Install{' '}
               <a
@@ -200,14 +201,14 @@ export default function Docs() {
             <CodeBlock
               label="lib/field.ts · profile defaults"
               code={
-                "profile: {\n  name: 'Nia',\n  purpose: COMPANION_PURPOSE,\n},"
+                "profile: {\n  name: 'Zuri',\n  purpose: COMPANION_PURPOSE,\n},"
               }
             />
             <p>
-              Nia’s identity, interests, small contradictions, voice, portrait
+              Zuri’s identity, interests, small contradictions, voice, portrait
               reference and palette live in{' '}
               <code>lib/companion-character.ts</code>. Her complete character,
-              visual and voice specification is in <code>docs/nia.md</code>. The
+              visual and voice specification is in <code>docs/zuri.md</code>. The
               runtime combines that definition with the action contract in{' '}
               <code>lib/entity.ts</code>. Keep permissions and response
               validation intact when changing her manner.
@@ -224,7 +225,7 @@ export default function Docs() {
             />
             <p>
               The portrait is a separate image at{' '}
-              <code>public/characters/nia-v1.png</code>. Editing a mesh color
+              <code>public/characters/zuri-v1.png</code>. Editing a mesh color
               does not recolor the portrait.
             </p>
             <div className="guide-file-list">
@@ -414,6 +415,38 @@ export default function Docs() {
             </p>
           </div>
         </section>
+        <section id="physical-desk" className="field-guide-section">
+          <span className="field-guide-number">06</span>
+          <div>
+            <p className="field-eyebrow">ZURI’S DESK</p>
+            <h2>Put a thought into motion.</h2>
+            <p>
+              Open the desk and ask: “Zuri, put the green cup on the tray.”
+              Follow each movement, change the object positions, and return to
+              the task’s observations and outcome.
+            </p>
+            <p>
+              In Connection, choose a virtual workspace or pair a physical desk.
+              A physical desk connects through a local bridge on the robot
+              computer. Its camera supplies the observations; you confirm the
+              final placement.
+            </p>
+            <CodeBlock
+              label="Connect your desk"
+              code={
+                'npm run db:setup\n# Configure FIELD_DESK_URL, FIELD_DESK_OPERATOR, FIELD_DESK_CAMERA\n# and FIELD_DESK_KEY in your private environment.\nnpm run desk:bridge\n# At the physical desk, enable task acceptance:\nnpm run desk:bridge -- --arm'
+              }
+            />
+            <p>
+              The source archive includes the complete connection and recovery
+              guide in <code>docs/desk.md</code>. A lost connection pauses the
+              controller and preserves the task for review.
+            </p>
+            <Link href="/desk" className="field-solid-link">
+              Open Zuri’s desk <ArrowUpRight size={16} />
+            </Link>
+          </div>
+        </section>
         <section id="troubleshooting" className="field-guide-section">
           <span className="field-guide-number">?</span>
           <div>
@@ -461,7 +494,7 @@ export default function Docs() {
         <FieldBrand />
         <span>One companion. A continuing story.</span>
         <Link href="/space">
-          Meet Nia <ArrowUpRight size={15} />
+          Meet Zuri <ArrowUpRight size={15} />
         </Link>
       </footer>
     </main>

@@ -207,7 +207,7 @@ export class XClient {
     if (image.type !== 'image/png' || !image.size || image.size > 5_000_000)
       throw new XError('invalid_media');
     const body = new FormData();
-    body.set('media', image, 'nia.png');
+    body.set('media', image, 'zuri.png');
     body.set('media_category', 'tweet_image');
     body.set('media_type', 'image/png');
     const r = await this.transport('https://api.x.com/2/media/upload', {

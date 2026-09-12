@@ -1,4 +1,44 @@
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  uniqueIndex,
+  primaryKey,
+} from 'drizzle-orm/sqlite-core';
+
+export const deskMediaObjects = sqliteTable('desk_media_objects', {
+  key: text('key').primaryKey(),
+  size: integer('size').notNull(),
+  contentType: text('content_type').notNull(),
+  capturedAt: text('captured_at').notNull(),
+  chunks: integer('chunks').notNull(),
+  ready: integer('ready').notNull().default(0),
+  createdAt: integer('created_at').notNull(),
+});
+export const deskMediaChunks = sqliteTable(
+  'desk_media_chunks',
+  {
+    objectKey: text('object_key')
+      .notNull()
+      .references(() => deskMediaObjects.key, { onDelete: 'cascade' }),
+    sequence: integer('sequence').notNull(),
+    data: text('data').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.objectKey, t.sequence] })],
+);
+
+export const deskSessions = sqliteTable(
+  'desk_sessions',
+  {
+    workspaceId: text('workspace_id').primaryKey(),
+    data: text('data').notNull(),
+    revision: integer('revision').notNull().default(0),
+    bridgeHash: text('bridge_hash'),
+    updatedAt: integer('updated_at').notNull(),
+  },
+  (t) => [uniqueIndex('idx_desk_bridge_hash').on(t.bridgeHash)],
+);
 export const workspaces = sqliteTable('workspaces', {
   id: text('id').primaryKey(),
   data: text('data').notNull(),
@@ -48,8 +88,8 @@ export const xConnections = sqliteTable('x_connections', {
   updatedAt: integer('updated_at').notNull(),
 });
 
-export const niaDrafts = sqliteTable(
-  'nia_drafts',
+export const zuriDrafts = sqliteTable(
+  'zuri_drafts',
   {
     id: text('id').primaryKey(),
     brief: text('brief').notNull(),
@@ -62,7 +102,7 @@ export const niaDrafts = sqliteTable(
     updatedAt: integer('updated_at').notNull(),
   },
   (t) => [
-    index('idx_nia_drafts_created').on(t.createdAt),
-    index('idx_nia_drafts_phase').on(t.phase),
+    index('idx_zuri_drafts_created').on(t.createdAt),
+    index('idx_zuri_drafts_phase').on(t.phase),
   ],
 );

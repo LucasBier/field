@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import { NIA_MODEL } from '../lib/companion-model';
+import { ZURI_MODEL } from '../lib/companion-model';
 
 await test('the published character matches the reviewed asset and embeds its skeleton, motion and PBR textures', async () => {
-  const bytes = await readFile(`public${NIA_MODEL.src}`);
+  const bytes = await readFile(`public${ZURI_MODEL.src}`);
   const header = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const manifest = JSON.parse(
-    await readFile('public/characters/nia-v2.json', 'utf8'),
+    await readFile('public/characters/zuri-v2.json', 'utf8'),
   );
   assert.equal(header.getUint32(0, true), 0x46546c67);
   assert.equal(header.getUint32(4, true), 2);
@@ -20,7 +20,7 @@ await test('the published character matches the reviewed asset and embeds its sk
     createHash('sha256').update(bytes).digest('hex'),
     manifest.sha256,
   );
-  assert.equal(manifest.heightMeters, NIA_MODEL.height);
+  assert.equal(manifest.heightMeters, ZURI_MODEL.height);
 
   const document = JSON.parse(
     bytes.subarray(20, 20 + header.getUint32(12, true)).toString(),
@@ -30,7 +30,7 @@ await test('the published character matches the reviewed asset and embeds its sk
   assert.ok(document.skins[0].joints.length >= 20);
   assert.deepEqual(
     document.animations.map((clip: { name: string }) => clip.name).sort(),
-    Object.values(NIA_MODEL.clips).sort(),
+    Object.values(ZURI_MODEL.clips).sort(),
   );
   for (const clip of document.animations) {
     assert.ok(clip.channels.length > 20, `${clip.name} has no body motion.`);

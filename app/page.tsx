@@ -1,4 +1,4 @@
-import { NIA } from '@/lib/companion-character';
+import { ZURI } from '@/lib/companion-character';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
@@ -66,7 +66,7 @@ export default function Home() {
               </em>
             </h1>
             <p className="field-entry-description">
-              Field is a home for a continuing relationship with Nia. She
+              Field is a home for a continuing relationship with Zuri. She
               carries the memories, plans, and moments you choose to share. When
               life changes, you can change what she understands about you.
             </p>
@@ -84,7 +84,7 @@ export default function Home() {
                 <ArrowDown size={17} /> Get the source
               </a>
               <Link href="/space" className="field-text-link">
-                Meet Nia <ArrowUpRight size={17} />
+                Meet Zuri <ArrowUpRight size={17} />
               </Link>
             </div>
             <div className="field-install">
@@ -103,8 +103,8 @@ export default function Home() {
           <PortraitMotion>
             <div className="field-portrait-frame">
               <Image
-                src={NIA.appearance.portrait}
-                alt={NIA.appearance.alt}
+                src={ZURI.appearance.portrait}
+                alt={ZURI.appearance.alt}
                 width={1254}
                 height={1254}
                 fetchPriority="high"
@@ -112,7 +112,7 @@ export default function Home() {
               />
             </div>
             <figcaption>
-              <span>NIA / A MIND OF HER OWN</span>
+              <span>ZURI / A MIND OF HER OWN</span>
               <span>ATTENTIVE. WRY. OPEN TO CHANGE.</span>
             </figcaption>
           </PortraitMotion>
@@ -130,7 +130,7 @@ export default function Home() {
           <Reveal>
             <p className="field-eyebrow">A WORLD TO TAKE PART IN</p>
             <h2>
-              The same Nia.
+              The same Zuri.
               <br />
               <em>A place beside you.</em>
             </h2>
@@ -141,7 +141,7 @@ export default function Home() {
               experience becomes part of a continuing relationship.
             </p>
             <Link href="/space" className="field-text-link">
-              Enter Nia’s space <ArrowUpRight size={17} />
+              Enter Zuri’s space <ArrowUpRight size={17} />
             </Link>
           </Reveal>
           <SpatialPreview />

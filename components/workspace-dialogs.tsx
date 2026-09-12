@@ -171,7 +171,7 @@ export function MemoryDialog({
                   value={query}
                   maxLength={3000}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="What would you say to Nia?"
+                  placeholder="What would you say to Zuri?"
                 />
                 <p>
                   {query.trim()
@@ -196,7 +196,7 @@ export function MemoryDialog({
                   <p>
                     {history
                       ? 'When you correct a memory, its earlier version appears here.'
-                      : 'Leave a note below. Nia can use the memories you choose to keep in future conversations.'}
+                      : 'Leave a note below. Zuri can use the memories you choose to keep in future conversations.'}
                   </p>
                 </div>
               )}

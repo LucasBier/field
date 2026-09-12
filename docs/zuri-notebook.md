@@ -1,4 +1,4 @@
-# Nia’s notebook
+# Zuri’s notebook
 
 Things I keep coming back to.
 

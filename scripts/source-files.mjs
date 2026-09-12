@@ -57,4 +57,4 @@ export function sourceFiles(root) {
   return entries.sort((a, b) => a.localeCompare(b, 'en'));
 }
 
-export const localHosting = { d1: 'DB', r2: null };
+export const localHosting = { d1: 'DB', r2: 'DESK_MEDIA' };

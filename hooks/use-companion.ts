@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { parseDeskInstruction } from '@/lib/desk';
 import type { useWorkspace } from './use-workspace';
 import { receipt, entityDemo } from '@/lib/entity';
 import { demoReply } from '@/lib/agent';
@@ -34,6 +36,8 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
     [dismissed, setDismissed] = useState(false),
     [verified, setVerified] = useState(false),
     [usage, setUsage] = useState<number | null>(null);
+  const router = useRouter();
+  const deskRequest = useRef<{ id: string; instruction: string } | null>(null);
   const active = useRef<AbortController | null>(null);
   const chosenConnection = useRef(false);
   const [site, setSite] = useState<SiteAccess | null>(null);
@@ -65,7 +69,7 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
           ? 'Disconnected conversation service. Room controls remain available.'
           : `Selected ${next.provider === 'site' ? 'Field' : next.provider === 'ollama' ? 'local' : 'hosted'} connection. Identity unchanged.`,
         'you',
-        next.provider === 'demo' ? 'Room controls' : 'Nia connection',
+        next.provider === 'demo' ? 'Room controls' : 'Zuri connection',
       ),
     );
     chosenConnection.current = true;
@@ -79,13 +83,55 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
   const send = async () => {
     if (disabled || !message.trim() || active.current) return;
     const text = message.trim();
+    if (parseDeskInstruction(text)) {
+      const controller = new AbortController();
+      active.current = controller;
+      setBusy(true);
+      setNotice('');
+      if (deskRequest.current?.instruction !== text)
+        deskRequest.current = { id: crypto.randomUUID(), instruction: text };
+      try {
+        await flush();
+        const initialized = await fetch('/api/desk', {
+          signal: controller.signal,
+        });
+        if (!initialized.ok) throw new Error('The desk could not be opened.');
+        const r = await fetch('/api/desk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'start', ...deskRequest.current }),
+          signal: AbortSignal.any([
+            controller.signal,
+            AbortSignal.timeout(10000),
+          ]),
+        });
+        const result = (await r.json()) as { error?: string };
+        if (!r.ok)
+          throw new Error(
+            result.error || 'The desk request was not confirmed.',
+          );
+        deskRequest.current = null;
+        setMessage('');
+        router.push('/desk');
+      } catch (e) {
+        setNotice(
+          e instanceof Error
+            ? e.message
+            : 'Open the desk to check this task before retrying.',
+        );
+      } finally {
+        setBusy(false);
+        active.current = null;
+      }
+      return;
+    }
     if (
       connection.provider === 'demo' &&
       !/^remember\s*[: ,]/i.test(text) &&
       !entityDemo(text, current.current).actions.length
     ) {
       setNotice(
-        'Nia’s conversation service is not connected. Connect it to start talking. Your room, notes, and memories are available.',
+        'Zuri’s conversation service is not connected. Connect it to start talking. Your room, notes, and memories are available.',
       );
       return;
     }
@@ -226,11 +272,11 @@ export function useCompanion(session: ReturnType<typeof useWorkspace>) {
   );
   const modelLabel =
     connection.provider === 'demo'
-      ? 'Connect Nia'
+      ? 'Connect Zuri'
       : connection.provider === 'ollama' ||
           (connection.provider === 'site' && site?.provider === 'ollama')
-        ? 'Nia · Local connection'
-        : 'Nia · Connected';
+        ? 'Zuri · Local connection'
+        : 'Zuri · Connected';
   const localConnection =
     connection.provider === 'ollama' ||
     (connection.provider === 'site' && site?.provider === 'ollama');

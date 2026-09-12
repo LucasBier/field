@@ -30,7 +30,7 @@ function stream(text: string) {
   });
 }
 function output(
-  reply = '{"reply":"Hello, Nia.","actions":[]}',
+  reply = '{"reply":"Hello, Zuri.","actions":[]}',
   reason = 'stop',
 ) {
   return [
@@ -101,11 +101,11 @@ await test('local inference records zero API spend and refuses context that coul
 await test('native local streaming handles fragmented UTF-8 and aborts a blocked reader', async () => {
   const chunks = [];
   for await (const value of localEvents(
-    stream('{"text":"你好"}\r\n{"text":"Nia"}'),
+    stream('{"text":"你好"}\r\n{"text":"Zuri"}'),
     new AbortController().signal,
   ))
     chunks.push(value);
-  assert.deepEqual(chunks, [{ text: '你好' }, { text: 'Nia' }]);
+  assert.deepEqual(chunks, [{ text: '你好' }, { text: 'Zuri' }]);
   const abort = new AbortController(),
     events = localEvents(new ReadableStream(), abort.signal);
   const next = events.next();
@@ -130,7 +130,7 @@ await test('local adapter sends a constrained schema with thinking off, streams 
       (text) => shown.push(text),
     );
     assert.deepEqual(result, {
-      reply: 'Hello, Nia.',
+      reply: 'Hello, Zuri.',
       actions: [],
       usage: { input: 50, output: 20, total: 70 },
     });

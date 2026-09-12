@@ -31,7 +31,7 @@ export const HOSTED_MESSAGES = {
     'The selected context is too large for this local model. Shorten saved notes or recent conversation before trying again.',
   quota:
     'The conversation allowance has been reached. Please return after the daily reset.',
-  busy: 'A response is already running, or Nia is at capacity. Please try again shortly.',
+  busy: 'A response is already running, or Zuri is at capacity. Please try again shortly.',
   conflict: 'Your space changed. Refresh it before sending this message again.',
   context_changed:
     'Your understanding changed during this response. Send your message again with current memory.',

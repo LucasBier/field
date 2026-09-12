@@ -33,8 +33,8 @@ export function SpatialPreview() {
           <AgentScene compact zone={zone} onMove={setZone} paused={paused} />
         </Suspense>
       )}
-      <div className="field-preview-label">NIA / LIVE 3D PREVIEW</div>
-      <div className="field-preview-locations" aria-label="Nia’s location">
+      <div className="field-preview-label">ZURI / LIVE 3D PREVIEW</div>
+      <div className="field-preview-locations" aria-label="Zuri’s location">
         {(['desk', 'center', 'window'] as Zone[]).map((z) => (
           <button key={z} aria-pressed={zone === z} onClick={() => setZone(z)}>
             {z}

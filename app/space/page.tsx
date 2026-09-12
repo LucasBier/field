@@ -22,6 +22,7 @@ import {
   Activity,
 } from 'lucide-react';
 import AgentScene from '@/components/agent-scene';
+
 import AgentPanels, { type Panel } from '@/components/agent-panels';
 import { downloadAgent } from '@/lib/agent-export';
 import AgentConnectionDialog from '@/components/agent-connection';
@@ -141,6 +142,13 @@ export default function Space() {
           <small>{busy ? 'Thinking…' : modelLabel}</small>
         </div>
         <nav>
+          <Link
+            href="/desk"
+            className="space-desk-link"
+            aria-label="Open Zuri’s desk"
+          >
+            Desk <ArrowUpRight size={16} />
+          </Link>
           <Button
             variant="ghost"
             disabled={disabled}
@@ -178,7 +186,7 @@ export default function Space() {
             {localConnection ? <Cpu size={15} /> : <Cloud size={15} />}
             <span>
               {connection.provider === 'demo'
-                ? 'Connect Nia'
+                ? 'Connect Zuri'
                 : localConnection
                   ? 'Local model'
                   : 'Hosted model'}
@@ -211,7 +219,9 @@ export default function Space() {
           <button
             className="companion-greeting"
             disabled={disabled}
-            onClick={() => setGreeting((n) => n + 1)}
+            onClick={() => {
+              setGreeting((n) => n + 1);
+            }}
           >
             <Hand size={15} /> Wave hello
           </button>
@@ -330,7 +340,7 @@ export default function Space() {
             {busy
               ? 'Thinking about what you said…'
               : connection.provider === 'demo'
-                ? 'Your space is ready. Connect Nia to start talking.'
+                ? 'Your space is ready. Connect Zuri to start talking.'
                 : 'Hi, you. Tell me about your day.'}
           </p>
         )}
@@ -374,7 +384,7 @@ export default function Space() {
             maxLength={3000}
             placeholder={
               connection.provider === 'demo'
-                ? 'Connect Nia to start talking…'
+                ? 'Connect Zuri to start talking…'
                 : `Talk to ${workspace.profile.name}…`
             }
             value={message}
@@ -442,7 +452,7 @@ export default function Space() {
           </>
         )}
       </output>
-      <div className="space-surface-label">VIRTUAL DESKTOP · DRAG TO ORBIT</div>
+      <div className="space-surface-label">DRAG TO ORBIT</div>
       <MemoryDialog
         open={memory}
         onOpenChange={setMemory}

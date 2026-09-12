@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { NIA_MEDIA } from '../lib/nia-media';
-import { loadNiaImage } from '../lib/nia-media-server';
+import { ZURI_MEDIA } from '../lib/zuri-media';
+import { loadZuriImage } from '../lib/zuri-media-server';
 import { XClient, type XConfig } from '../lib/x-auth';
 const config = {
   clientId: 'client',
@@ -13,7 +13,7 @@ const config = {
   origin: 'https://field.example',
 } satisfies XConfig;
 await test('catalog loader binds every image to its reviewed digest and blocks changed bytes', async () => {
-  for (const asset of NIA_MEDIA) {
+  for (const asset of ZURI_MEDIA) {
     const bytes = await readFile(
       new URL('../public' + asset.path, import.meta.url),
     );
@@ -24,13 +24,13 @@ await test('catalog loader binds every image to its reviewed digest and blocks c
       return new Response(bytes, { headers: { 'Content-Type': 'image/png' } });
     };
     assert.equal(
-      (await loadNiaImage(config.origin, asset.id, transport)).size,
+      (await loadZuriImage(config.origin, asset.id, transport)).size,
       asset.bytes,
     );
     const altered = Uint8Array.from(bytes);
     altered[altered.length - 1] ^= 1;
     await assert.rejects(
-      loadNiaImage(
+      loadZuriImage(
         config.origin,
         asset.id,
         async () =>
@@ -40,7 +40,7 @@ await test('catalog loader binds every image to its reviewed digest and blocks c
     );
   }
   await assert.rejects(
-    loadNiaImage(
+    loadZuriImage(
       config.origin,
       'window-v1',
       async () =>
