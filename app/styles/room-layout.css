@@ -1,4 +1,3 @@
-/* Scene pixels belong to Zuri. Controls take their own rows, including on phones. */
 .agent-world {
   display: flex;
   flex-direction: column;

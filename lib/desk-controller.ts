@@ -25,7 +25,6 @@ export type BridgeIO = {
   now(): number;
 };
 
-/** One bounded command at a time. External dispatches are never retried. */
 export async function executeDeskTask(
   io: BridgeIO,
   task: NonNullable<BridgeReply['task']>,
@@ -163,7 +162,6 @@ export async function executeDeskTask(
     }
     throw new Error('The bounded execution limit was reached.');
   } finally {
-    // A disconnect must not leave continuous control running. Failure keeps the journal for recovery.
     if (!paused) await pause();
     if (acknowledged) await io.checkpoint(null);
   }

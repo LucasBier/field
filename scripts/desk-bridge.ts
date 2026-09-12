@@ -170,11 +170,9 @@ if (!process.argv.includes('--arm')) {
       await delay(1500);
     }
   } catch (e) {
-    // Do not clear the journal or replay a potentially dispatched command.
     try {
       await io.operator('/api/pause', {});
     } catch {
-      /* The local physical stop remains authoritative. */
     }
     console.error(
       e instanceof Error

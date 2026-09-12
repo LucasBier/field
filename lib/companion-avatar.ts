@@ -12,7 +12,6 @@ export type CompanionPose =
 
 type Ring = [height: number, width: number, depth: number];
 
-// Articulated body and motion curves for the Zuri character specification.
 function silhouette(rings: Ring[], segments = 48) {
   const positions: number[] = [];
   const indices: number[] = [];

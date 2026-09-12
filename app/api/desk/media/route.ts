@@ -57,7 +57,6 @@ export async function POST(request: Request) {
             bytes[3] === 163
           : String.fromCharCode(...bytes.slice(4, 8)) === 'ftyp';
     if (!signature) throw new DeskError('Unsupported media contents.', 400);
-    // Reserve a bounded upload allowance before object storage, with immutable object names.
     const state = await store.change(scope, (s) => {
       advanceDesk(s, Date.now());
       const t = s.tasks.find((t) => t.id === id);

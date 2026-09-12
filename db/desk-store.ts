@@ -23,7 +23,6 @@ export class DeskStore {
     scope: string,
     apply: (s: DeskState) => DeskState,
   ): Promise<DeskState> {
-    // Callbacks are pure state transitions: no device command or network I/O may live here.
     for (let attempt = 0; attempt < 5; attempt++) {
       const { state, revision } = await this.read(scope);
       const before = JSON.stringify(state);

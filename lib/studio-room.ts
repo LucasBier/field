@@ -311,7 +311,6 @@ export function createStudioRoom(
   for (const x of [-3.03, -2.57])
     for (const z of [-2.5, -2.1])
       cylinder(0.018, 0.012, 0.4, walnut, [x, 0.2, z]);
-  // Books, ceramic objects and records make the room specific to Zuri.
   const shelf = new THREE.Group();
   for (const y of [0.16, 0.68, 1.2, 1.72, 2.24])
     box(2.3, 0.045, 0.45, walnut, [0.25, y, -3.7], 0.015, shelf);

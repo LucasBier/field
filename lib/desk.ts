@@ -135,7 +135,6 @@ export function publicDesk(s: DeskState, now = Date.now()): DeskView {
 }
 function record(s: DeskState, t: DeskTask, text: string, now: number) {
   t.updatedAt = now;
-  // Keep the beginning and terminal evidence. Intermediate frames have a bounded budget.
   if (t.events.length >= 38) t.events.splice(1, 1);
   t.events.push({
     at: now,
@@ -213,7 +212,6 @@ export function inTray(object: DeskObject) {
     Math.abs(object.y) < 0.005
   );
 }
-/** Advances only the explicitly virtual workspace. No hardware completion is inferred from elapsed time. */
 export function advanceDesk(s: DeskState, now: number) {
   const task = activeTask(s);
   if (!task) return s;
@@ -260,7 +258,6 @@ export function advanceDesk(s: DeskState, now: number) {
     hand.y = 0.42;
   }
   if (task.stage === 2) {
-    // Re-observe before grasping; a changed layout must not reuse the previous coordinates.
     if (Math.hypot(hand.x - object.x, hand.z - object.z) > 0.02) {
       task.stage = 1;
       record(
@@ -440,7 +437,6 @@ export function switchToVirtualDesk(s: DeskState) {
   s.observation = undefined;
   return s;
 }
-/** At-most-once dispatch. A lost claim response cannot be retried as a new execution. */
 export function claimDeskTask(s: DeskState, lease: string, now: number) {
   if (s.device.mode !== 'physical')
     throw new DeskError('This workspace has no physical device.', 403);
